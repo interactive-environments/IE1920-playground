@@ -18,11 +18,11 @@ void updateWindow() {
   for (int i = 0; i < windowSize - 1; i++) {
     values[i] = values[i + 1];
   }
-  values[windowSize - 1] = R2;
+  values[windowSize - 1] = Vout;
 }
 
-int getRunningAvg() {
-  int sum = 0;
+float getRunningAvg() {
+  float sum = 0;
   for (int i = 0; i < windowSize; i++) {
     sum += values[i];
   }

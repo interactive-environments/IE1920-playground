@@ -41,11 +41,13 @@ void loop()
     iterateOn();
     //instead of iterate on
     //if(!done){
-        //String message = 
-        //client.publish("/OfficePlayground", "1");
+        //String message = ownnr + " 1";
+        //client.publish("/OfficePlayground", message);
         //bool done = true
+        //iterateOn();
      //}
   }
   //if(done && pressureValue < 3000){
-    //client.publish("/OfficePlayground", "0"
+    //String message = ownnr + " 0";
+    //client.publish("/OfficePlayground", message);
 }
