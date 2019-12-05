@@ -44,6 +44,7 @@ void clearPixels() {
 }
 
 bool calcPV(){
+   loopPressureSensor();
   return (getRunningAvg()>4);
 }
 
