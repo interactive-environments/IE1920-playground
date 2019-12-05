@@ -44,12 +44,11 @@ void clearPixels() {
 }
 
 bool calcPV(){
-  return (getRunningAvg()>3000);
+  return (getRunningAvg()>4);
 }
 
 void iterateOn() {
   while(calcPV()){
-    Serial.println(analogRead(A0));
     crossFade(red);
     if(!calcPV()){break;} 
     crossFade(orange);
