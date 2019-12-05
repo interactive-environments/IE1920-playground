@@ -43,21 +43,25 @@ void clearPixels() {
   pixels.show();
 }
 
+bool calcPV(){
+  return (getRunningAvg()>3000);
+}
+
 void iterateOn() {
-  while(analogRead(A0)>800){
+  while(calcPV()){
     Serial.println(analogRead(A0));
     crossFade(red);
-    if(analogRead(A0)<800){break;} 
+    if(!calcPV()){break;} 
     crossFade(orange);
-    if(analogRead(A0)<800){break;} 
+    if(!calcPV()){break;} 
     crossFade(yellow);
-    if(analogRead(A0)<800){break;} 
+    if(!calcPV()) {break;} 
     crossFade(green);
-    if(analogRead(A0)<800){break;} 
+    if(!calcPV()){break;} 
     crossFade(blue);
-    if(analogRead(A0)<800){break;} 
+    if(!calcPV()){break;} 
     crossFade(purple);
-    if(analogRead(A0)<800){break;} 
+    if(!calcPV){break;} 
     crossFade(pink);
   }
 }
@@ -121,7 +125,7 @@ void crossFade(int color[3]) {
         pixels.show();
   }
   
-   if(analogRead(A0)<800){
+   if(!calcPV()){
       prevR = redVal; 
       prevG = grnVal; 
       prevB = bluVal;

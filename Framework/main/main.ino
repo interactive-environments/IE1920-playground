@@ -9,6 +9,14 @@ unsigned long no_touch;
 unsigned long touched;
 MQTTClient client;
 
+/*void initPressureSensor();
+void initMqtt(MQTTClient client);
+void initColour();
+void connect();
+void loopPressureSensor();
+int getRunningAvg();
+void iterateOn(); */
+
 void setup() 
 {
 Serial.begin(9600);
