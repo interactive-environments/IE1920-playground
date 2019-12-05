@@ -25,5 +25,4 @@ void initBreathing() {
 
 void breathingOn() {
   
-  }
 }

@@ -1,5 +1,5 @@
 #include <WiFiNINA.h>
-#include <MQTT.h>
+//#include <MQTT.h>
 
 const char ssid[] = "LauraO";
 const char pass[] = "";
@@ -8,7 +8,7 @@ const char mqtt_clientID[] = "Arduino Nano IOT Nr1";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
 WiFiClient net;
-MQTTClient client;
+//MQTTClient client;
 void connect() {
   Serial.print("checking wifi...");
   while (WiFi.status() != WL_CONNECTED) {
@@ -32,14 +32,11 @@ void messageReceived(String &topic, String &payload) {
 }
 
 
-void initMqtt() {
+void initMqtt(MQTTClient client) {
   Serial.println("WiFi.begin");
   WiFi.begin(ssid, pass);
   client.begin("broker.shiftr.io", net);
   client.onMessage(messageReceived);
   connect();
-
-}
-
 
 }

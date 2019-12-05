@@ -34,7 +34,7 @@ int j = 0;          // loop counter for repeat
 
 void initColour() {
   pixels.begin(); // INITIALIZE NeoPixel pixels object (REQUIRED)
-  pixels.setBrightness(50); 
+  pixels.setBrightness(150); 
   pixels.clear(); // Set all pixel colors to 'off'
 }
 
@@ -111,7 +111,7 @@ void crossFade(int color[3]) {
   int stepG = calculateStep(prevG, G); 
   int stepB = calculateStep(prevB, B);
 
-  for (int i = 0; i <= 510; i++) { //was 1020
+  for (int i = 0; i <= 350; i++) { //was 1020
     redVal = calculateVal(stepR, redVal, i);
     grnVal = calculateVal(stepG, grnVal, i);
     bluVal = calculateVal(stepB, bluVal, i);
