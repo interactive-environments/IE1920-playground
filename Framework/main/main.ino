@@ -21,7 +21,7 @@ void setup()
 {
 Serial.begin(9600);
   initPressureSensor();
-  initMqtt(client);
+//  initMqtt(client);
   initColour();
   no_touch = millis();
   touched = millis();
@@ -30,14 +30,14 @@ Serial.begin(9600);
 void loop() 
 {
   //mqtt
-  client.loop();
-  if (!client.connected()){ connect();}
+//  client.loop();
+//  if (!client.connected()){ connect();}
 
   //pressuresensor just turning on when being stepped on.
  loopPressureSensor();
   float pressureValue = getRunningAvg();
   Serial.println(pressureValue);
-  if(pressureValue > 3000){
+  if(pressureValue > 4){
     iterateOn();
     //instead of iterate on
     //if(!done){
