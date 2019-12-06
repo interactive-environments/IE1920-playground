@@ -1,53 +1,78 @@
-#include <MQTT.h>
+enum State {
+  INACTIVE,
+  BREATHING,
+  STEPPING,
+  STEPPED,
+  FADING
+};
 
-int ownnr = 1;
+int id = 1;
 int previous;
-bool done = false;
-bool idle = true;
-int neighbours[3] = { 2, 3, 4}; 
-unsigned long no_touch;
+int neighbours[3] = { 2, 3, 4};
 unsigned long touched;
-MQTTClient client;
+State state = INACTIVE;
 
-/*void initPressureSensor();
-void initMqtt(MQTTClient client);
-void initColour();
-void connect();
-void loopPressureSensor();
-int getRunningAvg();
-void iterateOn(); */
+void inactive() {
+  if (getRunningAvg() > 4) {
+    touched = millis();
+    setState(STEPPING);
+  }
+}
 
-void setup() 
+void breathing() {
+
+}
+
+void stepping() {
+  float pressureValue = getRunningAvg();
+  if (pressureValue > 4) {
+    touched = millis();
+  }
+  if(millis() - touched > 500) {
+    setState(STEPPED);
+  }
+}
+
+void stepped() {
+
+}
+
+void fading() {
+
+}
+
+void setState(State newState) {
+  switch (newState) {
+    case INACTIVE: break;
+    case BREATHING: break;
+    case STEPPING:
+      sendMessage("all", "on"); break;
+    case STEPPED:
+      sendMessage("all", "on");break;
+    case FADING: break;
+  }
+  state = newState;
+}
+
+void setup()
 {
-Serial.begin(9600);
+  Serial.begin(9600);
   initPressureSensor();
-//  initMqtt(client);
+  initMqtt();
   initColour();
-  no_touch = millis();
   touched = millis();
 }
 
-void loop() 
+void loop()
 {
-  //mqtt
-//  client.loop();
-//  if (!client.connected()){ connect();}
+  loopPressureSensor();
+  loopMqtt();
 
-  //pressuresensor just turning on when being stepped on.
- loopPressureSensor();
-  float pressureValue = getRunningAvg();
-  Serial.println(pressureValue);
-  if(pressureValue > 4){
-    iterateOn();
-    //instead of iterate on
-    //if(!done){
-        //String message = ownnr + " 1";
-        //client.publish("/OfficePlayground", message);
-        //bool done = true
-        //iterateOn();
-     //}
+  switch (state) {
+    case INACTIVE: inactive(); break;
+    case BREATHING: breathing(); break;
+    case STEPPING: stepping(); break;
+    case STEPPED: stepped(); break;
+    case FADING: fading(); break;
   }
-  //if(done && pressureValue < 3000){
-    //String message = ownnr + " 0";
-    //client.publish("/OfficePlayground", message);
 }
