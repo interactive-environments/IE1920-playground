@@ -1,10 +1,5 @@
-#include <Adafruit_NeoPixel.h>
 
-#include <Arduino_LSM6DS3.h>
-#define PIN        5 // On Trinket or Gemma, suggest changing this to 1
-#define NUMPIXELS 10 // Popular NeoPixel ring size
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
+//Colours, change these to change the colours
 int black[3] = {0, 0, 0};
 int red[3]  = { 100, 0, 0 };
 int orange[3] = { 100, 50, 0 };
@@ -14,10 +9,12 @@ int blue[3]   = { 0, 0, 100 };
 int purple[3] = { 100, 0, 100 };
 int pink[3] = { 100, 0, 50 };
 
+//Initialize on black
 int redVal = black[0];
 int grnVal = black[1];
 int bluVal = black[2];
 
+//Previous values of each colour
 int prevR = redVal;
 int prevG = grnVal;
 int prevB = bluVal;

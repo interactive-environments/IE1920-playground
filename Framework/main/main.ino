@@ -9,13 +9,11 @@ unsigned long no_touch;
 unsigned long touched;
 MQTTClient client;
 
-/*void initPressureSensor();
-void initMqtt(MQTTClient client);
-void initColour();
-void connect();
-void loopPressureSensor();
-int getRunningAvg();
-void iterateOn(); */
+#include <Adafruit_NeoPixel.h>
+#include <Arduino_LSM6DS3.h>
+#define PIN        5 // On Trinket or Gemma, suggest changing this to 1
+#define NUMPIXELS 10 // Popular NeoPixel ring size
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() 
 {
