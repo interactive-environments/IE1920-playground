@@ -10,6 +10,7 @@ int id = 1;
 int previous;
 int neighbours[3] = { 2, 3, 4};
 unsigned long touched;
+unsigned long touching; //TODO Edge cases if someone touches the thing for 7 minutes long
 State state = INACTIVE;
 
 void inactive() {
@@ -28,6 +29,7 @@ void stepping() {
   if (pressureValue > 4) {
     touched = millis();
   }
+  touching = millis();
   if(millis() - touched > 500) {
     setState(STEPPED);
   }
