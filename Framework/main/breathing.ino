@@ -6,7 +6,12 @@ void breathingOn() {
       pixels.setPixelColor(j, pixels.Color(i, i, i));
     }
     pixels.show();
-    delay(10);
+    waittime(10);
   }
 
+}
+
+bool waittime(int wait_in_millis){
+  unsigned long starttime = millis();
+  while(millis() < starttime + wait_in_millis){}
 }
