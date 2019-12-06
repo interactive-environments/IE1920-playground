@@ -36,14 +36,13 @@ void clearPixels() {
   pixels.show();
 }
 
-bool calcPV() {
-  loopPressureSensor();
-  return (getRunningAvg() > 4);
+bool calcPV(){
+   loopPressureSensor();
+  return (getRunningAvg()>4);
 }
 
 void iterateOn() {
-  while (calcPV()) {
-    Serial.println(analogRead(A0));
+  while(calcPV()){
     crossFade(red);
     if (!calcPV()) {
       break;
