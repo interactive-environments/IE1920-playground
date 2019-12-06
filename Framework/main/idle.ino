@@ -1,8 +1,3 @@
-
-//void initIdle() {
-//}
-
-
 void idleOn() {
   for (int i = 0, delta = 1; i > -1; i += delta) {
     if (i == 150) delta = -1;
@@ -13,4 +8,5 @@ void idleOn() {
     pixels.show();
     waittime(5);
   }
+  sendMessage(String(neighbours[random(3)]), "idle");
 }

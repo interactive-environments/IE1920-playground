@@ -3,7 +3,7 @@
 
 const char ssid[] = "LauraO";
 const char pass[] = "";
-String lastmessage = "0";
+//String lastmessage = "0";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
 WiFiClient net;
@@ -30,14 +30,38 @@ void connect() {
   client.subscribe("/" + id);
 }
 
-void messageReceived(String &topic, String &payload) {
-  lastmessage = payload;
+String getMsg() {
+  int index = lastmessage.indexOf(" ");
+  if (index != -1) {
+    return lastmessage.substring(index);
+  } else {
+    return "";
+  }
 }
 
-void sendMessage(String target,String msg) {
+int getNr() {
+  int index = lastmessage.indexOf(" ");
+  if (index != -1) {
+    return lastmessage.substring(0, index).toInt();
+  } else {
+    return 0;
+  }
+}
+
+void messageReceived(String &topic, String &payload) {
+  lastmessage = payload; //parser, if in deze state, maak state breathing.
+  String nr = getNr();
+  String msg = getMsg();
+  
+  if(msg == "breathing"&& !done){ setState(BREATHING);
+  if(msg == "idle"){ setState(INACTIVE);
+  if(msg == "fading"){ setState(FADING);
+  if(msg == "off") setState(OFF);
+}
+
+void sendMessage(String target, String msg) {
   client.publish("/" + target, id + " " + msg);
 }
-
 
 void initMqtt() {
   Serial.println("WiFi.begin");
