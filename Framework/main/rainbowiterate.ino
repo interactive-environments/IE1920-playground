@@ -33,6 +33,15 @@ void clearPixels() {
   pixels.show();
 }
 
+void updateVal(int redVal, int grnVal, int bluVal){
+      prevR = redVal;
+      prevG = grnVal;
+      prevB = bluVal;
+      curR = redVal;
+      curG = grnVal;
+      curB = bluVal;
+}
+
 bool calcPV(){
    loopPressureSensor();
   return (getRunningAvg()>4);
@@ -82,7 +91,6 @@ int calculateStep(int prevValue, int endValue) {
 */
 
 int calculateVal(int step, int val, int i) {
-
   if ((step) && i % step == 0) { // If step is non-zero and its time to change a value,
     if (step > 0) {              //   increment the value if step is positive...
       val += 1;
@@ -107,7 +115,8 @@ int calculateVal(int step, int val, int i) {
    the color values to the correct pins.
 */
 
-void crossFade(int color[3]) {
+
+void crossFade(int color[3]){
   // Convert to 0-255
   int R = (color[0] * 255) / 100;
   int G = (color[1] * 255) / 100;
@@ -128,14 +137,10 @@ void crossFade(int color[3]) {
     pixels.show();
 
     if (!calcPV()) {
-      prevR = redVal;
-      prevG = grnVal;
-      prevB = bluVal;
+      updateVal(redVal, grnVal, bluVal);      
       break;
     }
   }
   // Update current values for next loop
-  prevR = redVal;
-  prevG = grnVal;
-  prevB = bluVal;
+   updateVal(redVal, grnVal, bluVal);      
 }

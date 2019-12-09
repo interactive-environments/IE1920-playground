@@ -1,9 +1,19 @@
+/*
+#define NUMPIXELS 8
+#define PIN 5
+#include <Adafruit_NeoPixel.h>
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+*/
+
+
+//BIG TODO vragen Marijn wat ze bedoelde met meerdere for loops in 1 grote loop maken
 enum State {
   INACTIVE,
   BREATHING,
   STEPPING,
   STEPPED,
-  FADING
+  FADING,
+  OFF
 };
 
 int id = 1;
@@ -11,16 +21,17 @@ int previous;
 String lastmessage = "0";
 int neighbours[3] = { 2, 3, 4};
 unsigned long touched;
+bool done;
 unsigned long touching; //TODO Edge cases if someone touches the thing for 7 minutes long
 State state = INACTIVE;
+int curR, curG, curB;
 
 void inactive() {
   if (getRunningAvg() > 4) {
     touched = millis();
     setState(STEPPING);
   }
-  //idleOn();
-  //TODO er moet gekeken worden naar wie de eerste stap van het pad was. Deze moet idle beginnen.
+  idleOn();
 }
 
 void breathing() {
@@ -28,36 +39,33 @@ void breathing() {
 }
 
 void stepping() {
-  int previous = getNr();
+  int previous = getId();
   float pressureValue = getRunningAvg();
   if (pressureValue > 4) {
     touched = millis();
   }
-  for(int i = 0; i < sizeof(neighbours); i++){}
+  for (int i = 0; i < sizeof(neighbours); i++) {}
   touching = millis();
-  if(millis() - touched > 500) {
+  if (millis() - touched > 500) {
     setState(STEPPED);
   }
-  for(int i = 0; i < sizeof(neighbours); i++){
+  for (int i = 0; i < sizeof(neighbours); i++) {
     sendMessage(String(neighbours[i]), "breathing");
   }
 }
 
 void stepped() {
-  for(int i = 0; i < sizeof(neighbours); i++){
+  for (int i = 0; i < sizeof(neighbours); i++) {
     sendMessage(String(neighbours[i]), "off");
   }
 }
 
 void fading() {
- fadingOn();
+  fadingOn();
 }
 
 void off() {
-  for (int j = 0; j < NUMPIXELS; j++) {
-      pixels.setPixelColor(j, pixels.Color(0,0,0));
-    }
-    pixels.show();
+  breathingOff();
 }
 
 void setState(State newState) {
@@ -67,7 +75,7 @@ void setState(State newState) {
     case STEPPING:
       sendMessage("all", "on"); break;
     case STEPPED:
-      sendMessage("all", "on");break;
+      sendMessage("all", "on"); break;
     case FADING: break;
     case OFF: break;
   }
@@ -81,6 +89,7 @@ void setup()
   initMqtt();
   initColour();
   touched = millis();
+  done = false;
 }
 
 void loop()

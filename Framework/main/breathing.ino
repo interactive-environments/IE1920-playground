@@ -1,3 +1,4 @@
+
 #include <Adafruit_NeoPixel.h>
 #include <Arduino_LSM6DS3.h>
 #define PIN        5 // On Trinket or Gemma, suggest changing this to 1
@@ -16,7 +17,15 @@ void breathingOn() {
   }
 }
 
-bool waittime(int wait_in_millis){
+bool waittime(int wait_in_millis) {
   unsigned long starttime = millis();
-  while(millis() < starttime + wait_in_millis){}
+  while (millis() < starttime + wait_in_millis) {}
+}
+
+
+void breathingOff() {
+  for(int j = 0; j < NUMPIXELS; j++){
+    pixels.setPixelColor(j, pixels.Color(0, 0, 0));
+  }
+  pixels.show();
 }

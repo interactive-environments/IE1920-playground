@@ -39,7 +39,7 @@ String getMsg() {
   }
 }
 
-int getNr() {
+int getId() {
   int index = lastmessage.indexOf(" ");
   if (index != -1) {
     return lastmessage.substring(0, index).toInt();
@@ -50,13 +50,13 @@ int getNr() {
 
 void messageReceived(String &topic, String &payload) {
   lastmessage = payload; //parser, if in deze state, maak state breathing.
-  String nr = getNr();
+  int nr = getId();
   String msg = getMsg();
   
-  if(msg == "breathing"&& !done){ setState(BREATHING);
-  if(msg == "idle"){ setState(INACTIVE);
-  if(msg == "fading"){ setState(FADING);
-  if(msg == "off") setState(OFF);
+  if(msg == "breathing"&& !done){ setState(BREATHING);}
+  if(msg == "idle"){ setState(INACTIVE);}
+  if(msg == "fading"){ setState(FADING);}
+  if(msg == "off") {setState(OFF);}
 }
 
 void sendMessage(String target, String msg) {
