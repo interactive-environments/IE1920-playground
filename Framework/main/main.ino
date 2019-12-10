@@ -1,12 +1,12 @@
 #define TRESHOLD 4
 
-//BIG TODO vragen Marijn wat ze bedoelde met meerdere for loops in 1 grote loop maken
 enum State {
   INACTIVE,
   BREATHING,
   STEPPING,
   STEPPED,
   COLOURWAITING,
+  TOOLONGTOUCH,
   FADING,
   OFF
 };
@@ -18,7 +18,7 @@ String lastmessage = "0";
 int neighbours[3] = { 2, 3, 4};
 unsigned long touched;
 bool done;
-unsigned long touching; //TODO Edge cases if someone touches the thing for 7 minutes long
+unsigned long touching; 
 State state = INACTIVE;
 int curR, curG, curB;
 
@@ -35,7 +35,7 @@ void breathing() {
 }
 
 void stepping() {
-  int previous = getId();
+  if (previous == 0){previous = getId();}
   float pressureValue = getRunningAvg();
   if (pressureValue > TRESHOLD) {
     touched = millis();
@@ -53,6 +53,17 @@ void colourWaiting(){
   }
 }
 
+void tooLongTouch(){
+  if (previous != 0) {
+    sendMessage(String(previous), "fading");
+  }
+  while(state == TOOLONGTOUCH){
+    checkStillStanding();
+  }  
+  if(previous == 0){ sendMessage(String(id), "idle");}
+  else{SetState(OFF);}
+}
+
 void stepped() {
   for (int i = 0; i < sizeof(neighbours); i++) {
     sendMessage(String(neighbours[i]), "off");
@@ -66,6 +77,10 @@ void fading() {
 
 void off() {
   breathingOff();
+  if (getRunningAvg() > TRESHOLD) {
+    touched = millis();
+    setState(STEPPING);
+  }
 }
 
 void setState(State newState) {
@@ -90,6 +105,7 @@ void setup()
   initColour();
   touched = millis();
   done = false;
+  if(id == 1){setState(INACTIVE);
 }
 
 void loop()
@@ -103,6 +119,7 @@ void loop()
     case STEPPING: stepping(); break;
     case STEPPED: stepped(); break;
     case COLOURWAITING: colourWaiting(); break;
+    case TOOLONGTOUCH: tooLongTouch(); break;
     case FADING: fading(); break;
     case OFF: off(); break;
   }

@@ -9,4 +9,5 @@ void idleOn() {
     waittime(5);
   }
   sendMessage(String(neighbours[random(3)]), "idle");
+  setState(OFF);
 }

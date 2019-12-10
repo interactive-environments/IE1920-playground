@@ -47,6 +47,7 @@ void iterateOn() {
   for(int i = 0; i<sizeof(colours); i++){
     checkStillStanding();
     if(state != STEPPING){ break;}
+    if(millis()-touching > 4200){setState(TOOLONGTOUCH); break;}
     crossFade(colours[i]);
   }
 }
