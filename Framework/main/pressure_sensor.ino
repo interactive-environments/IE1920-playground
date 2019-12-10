@@ -29,6 +29,18 @@ float getRunningAvg() {
   return sum / windowSize;
 }
 
+void checkStillStanding() {
+  loopPressureSensor();
+  if (getRunningAvg() < TRESHOLD) {
+    setState(STEPPED);
+  }
+  else {
+    touched = millis();
+  }
+}
+
+
+
 void loopPressureSensor()
 {
   raw = analogRead(analogPin);

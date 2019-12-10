@@ -1,10 +1,4 @@
-/*
-#define NUMPIXELS 8
-#define PIN 5
-#include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-*/
-
+#define TRESHOLD 4
 
 //BIG TODO vragen Marijn wat ze bedoelde met meerdere for loops in 1 grote loop maken
 enum State {
@@ -12,11 +6,13 @@ enum State {
   BREATHING,
   STEPPING,
   STEPPED,
+  COLOURWAITING,
   FADING,
   OFF
 };
 
 int id = 1;
+int lastOn = 0;
 int previous;
 String lastmessage = "0";
 int neighbours[3] = { 2, 3, 4};
@@ -27,7 +23,7 @@ State state = INACTIVE;
 int curR, curG, curB;
 
 void inactive() {
-  if (getRunningAvg() > 4) {
+  if (getRunningAvg() > TRESHOLD) {
     touched = millis();
     setState(STEPPING);
   }
@@ -41,16 +37,19 @@ void breathing() {
 void stepping() {
   int previous = getId();
   float pressureValue = getRunningAvg();
-  if (pressureValue > 4) {
+  if (pressureValue > TRESHOLD) {
     touched = millis();
   }
-  for (int i = 0; i < sizeof(neighbours); i++) {}
   touching = millis();
-  if (millis() - touched > 500) {
-    setState(STEPPED);
-  }
   for (int i = 0; i < sizeof(neighbours); i++) {
     sendMessage(String(neighbours[i]), "breathing");
+  }
+  while(state == STEPPING){iterateOn();}
+}
+
+void colourWaiting(){
+  if (millis() - touched > 500 && lastOn == id) {
+   setState(FADING);
   }
 }
 
@@ -58,6 +57,7 @@ void stepped() {
   for (int i = 0; i < sizeof(neighbours); i++) {
     sendMessage(String(neighbours[i]), "off");
   }
+  setState(COLOURWAITING);  
 }
 
 void fading() {
@@ -102,6 +102,7 @@ void loop()
     case BREATHING: breathing(); break;
     case STEPPING: stepping(); break;
     case STEPPED: stepped(); break;
+    case COLOURWAITING: colourWaiting(); break;
     case FADING: fading(); break;
     case OFF: off(); break;
   }

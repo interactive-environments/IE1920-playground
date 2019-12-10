@@ -1,13 +1,15 @@
-
 //Colours, change these to change the colours
+int colours[][3] = {
+  {100, 0, 0}, //red
+  {100, 50, 0}, //orange
+  {100, 100, 0}, //yellow
+  {0, 100, 0}, //green
+  {0, 0, 100}, //blue
+  {100, 0, 100}, //purple
+  {100, 0, 50}, //pink
+};
+
 int black[3] = {0, 0, 0};
-int red[3]  = { 100, 0, 0 };
-int orange[3] = { 100, 50, 0 };
-int yellow[3] = { 100, 100, 0 };
-int green[3]  = { 0, 100, 0 };
-int blue[3]   = { 0, 0, 100 };
-int purple[3] = { 100, 0, 100 };
-int pink[3] = { 100, 0, 50 };
 
 //Initialize on black
 int redVal = black[0];
@@ -41,39 +43,11 @@ void updateVal(int redVal, int grnVal, int bluVal){
       curG = grnVal;
       curB = bluVal;
 }
-
-bool calcPV(){
-   loopPressureSensor();
-  return (getRunningAvg()>4);
-}
-
 void iterateOn() {
-  while(calcPV()){
-    crossFade(red);
-    if (!calcPV()) {
-      break;
-    }
-    crossFade(orange);
-    if (!calcPV()) {
-      break;
-    }
-    crossFade(yellow);
-    if (!calcPV()) {
-      break;
-    }
-    crossFade(green);
-    if (!calcPV()) {
-      break;
-    }
-    crossFade(blue);
-    if (!calcPV()) {
-      break;
-    }
-    crossFade(purple);
-    if (!calcPV) {
-      break;
-    }
-    crossFade(pink);
+  for(int i = 0; i<sizeof(colours); i++){
+    checkStillStanding();
+    if(state != STEPPING){ break;}
+    crossFade(colours[i]);
   }
 }
 
@@ -135,8 +109,8 @@ void crossFade(int color[3]){
       pixels.setPixelColor(k, pixels.Color(redVal, grnVal, bluVal));
     }
     pixels.show();
-
-    if (!calcPV()) {
+    checkStillStanding();
+    if (state != STEPPING) {
       updateVal(redVal, grnVal, bluVal);      
       break;
     }

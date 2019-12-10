@@ -57,6 +57,7 @@ void messageReceived(String &topic, String &payload) {
   if(msg == "idle"){ setState(INACTIVE);}
   if(msg == "fading"){ setState(FADING);}
   if(msg == "off") {setState(OFF);}
+  if(msg == "on") {lastOn = getId(); touched = millis();}
 }
 
 void sendMessage(String target, String msg) {
