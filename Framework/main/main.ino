@@ -15,7 +15,7 @@ int id = 1;
 int lastOn = 0;
 int previous;
 String lastmessage = "0";
-int neighbours[3] = { 2, 3, 4};
+int neighbours[1] = {2};
 unsigned long touched;
 bool done;
 unsigned long touching; 
@@ -23,6 +23,7 @@ State state = INACTIVE;
 int curR, curG, curB;
 
 void inactive() {
+  loopPressureSensor();
   if (getRunningAvg() > TRESHOLD) {
     touched = millis();
     setState(STEPPING);
@@ -61,7 +62,7 @@ void tooLongTouch(){
     checkStillStanding();
   }  
   if(previous == 0){ sendMessage(String(id), "idle");}
-  else{SetState(OFF);}
+  else{setState(OFF);}
 }
 
 void stepped() {
@@ -77,6 +78,7 @@ void fading() {
 
 void off() {
   breathingOff();
+  loopPressureSensor();
   if (getRunningAvg() > TRESHOLD) {
     touched = millis();
     setState(STEPPING);
@@ -105,7 +107,7 @@ void setup()
   initColour();
   touched = millis();
   done = false;
-  if(id == 1){setState(INACTIVE);
+  if(id == 1){setState(INACTIVE);}
 }
 
 void loop()
