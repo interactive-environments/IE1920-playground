@@ -1,4 +1,6 @@
 //Colours, change these to change the colours
+
+#define COLOURLENGTH 7
 int colours[][3] = {
   {100, 0, 0}, //red
   {100, 50, 0}, //orange
@@ -44,7 +46,7 @@ void updateVal(int redVal, int grnVal, int bluVal){
       curB = bluVal;
 }
 void iterateOn() {
-  for(int i = 0; i<sizeof(colours); i++){
+  for(int i = 0; i< COLOURLENGTH; i++){
     checkStillStanding();
     if(state != STEPPING){ break;}
     if(millis()-touching > 4200){setState(TOOLONGTOUCH); break;}

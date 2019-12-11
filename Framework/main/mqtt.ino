@@ -1,8 +1,8 @@
 #include <WiFiNINA.h>
 #include <MQTT.h>
 
-const char ssid[] = "LauraO";
-const char pass[] = "";
+const char ssid[] = "iot-net";
+const char pass[] = "interactive";
 //String lastmessage = "0";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
@@ -27,7 +27,7 @@ void connect() {
   Serial.println("\nconnected!");
 
   client.subscribe("/all");
-  client.subscribe("/" + id);
+  client.subscribe("/" + String(id));
 }
 
 String getMsg() {

@@ -1,4 +1,6 @@
 #define TRESHOLD 4
+#define NEIGHBOURSIZE 1
+//#define NEIGHBOURSIZE (sizeof(colours)/sizeof(neighbours[0]))
 
 enum State {
   INACTIVE,
@@ -15,7 +17,7 @@ int id = 1;
 int lastOn = 0;
 int previous;
 String lastmessage = "0";
-int neighbours[1] = {2};
+int neighbours[] = {2};
 unsigned long touched;
 bool done;
 unsigned long touching; 
@@ -42,15 +44,19 @@ void stepping() {
     touched = millis();
   }
   touching = millis();
-  for (int i = 0; i < sizeof(neighbours); i++) {
+  for (int i = 0; i < NEIGHBOURSIZE; i++) {
     sendMessage(String(neighbours[i]), "breathing");
   }
   while(state == STEPPING){iterateOn();}
 }
 
 void colourWaiting(){
-  if (millis() - touched > 500 && lastOn == id) {
+  if (millis() - touched > 5000 && lastOn == id) {
    setState(FADING);
+  }
+  if (getRunningAvg() > TRESHOLD) {
+    touched = millis();
+    setState(STEPPING);
   }
 }
 
@@ -66,7 +72,7 @@ void tooLongTouch(){
 }
 
 void stepped() {
-  for (int i = 0; i < sizeof(neighbours); i++) {
+  for (int i = 0; i < NEIGHBOURSIZE; i++) {
     sendMessage(String(neighbours[i]), "off");
   }
   setState(COLOURWAITING);  
@@ -92,7 +98,7 @@ void setState(State newState) {
     case STEPPING:
       sendMessage("all", "on"); break;
     case STEPPED:
-      sendMessage("all", "on"); break;
+      //sendMessage("all", "on"); break;
     case FADING: break;
     case OFF: break;
   }
@@ -114,7 +120,7 @@ void loop()
 {
   loopPressureSensor();
   loopMqtt();
-
+  Serial.println(state);
   switch (state) {
     case INACTIVE: inactive(); break;
     case BREATHING: breathing(); break;
