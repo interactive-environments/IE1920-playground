@@ -13,14 +13,14 @@ void fadingOn() {
       pixels.setPixelColor(k, pixels.Color(curR, curG, curB));
     }
     pixels.show();
-    waittime(10);
+    if(stateChangeCheckWithDelay(10)){return;}
   }
   breathingOff();
   if (previous != 0) {
     sendMessage(String(previous), "fading");
   }
-  else {
-    sendMessage(String(id), "idle");
+  else if(previous == -1) {
+    sendMessage(String(id), "firefly");
   }
   previous = 0;
 }

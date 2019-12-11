@@ -12,13 +12,19 @@ void breathingOn() {
       pixels.setPixelColor(j, pixels.Color(i, i, i));
     }
     pixels.show();
-    waittime(10);
+    if(stateChangeCheckWithDelay(10)){return;}
   }
 }
 
-bool waittime(int wait_in_millis) {
+bool stateChangeCheckWithDelay(int wait_in_millis) {
+  State startstate = state;
   unsigned long starttime = millis();
-  while (millis() < starttime + wait_in_millis) {}
+  while (millis() < starttime + wait_in_millis) {
+    loopPressureSensor();
+    loopMqtt();
+    if(state != startstate){ return true;}
+  }
+  return false;
 }
 
 

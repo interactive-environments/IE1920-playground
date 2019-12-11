@@ -1,9 +1,9 @@
-#define TRESHOLD 4
+#define THRESHOLD 4
 #define NEIGHBOURSIZE 1
 //#define NEIGHBOURSIZE (sizeof(colours)/sizeof(neighbours[0]))
 
 enum State {
-  INACTIVE,
+  FIREFLY,
   BREATHING,
   STEPPING,
   STEPPED,
@@ -17,16 +17,15 @@ int previous;
 int neighbours[] = {1};
 unsigned long touched;
 bool done;
-unsigned long touching; 
 State state = OFF;
 int curR, curG, curB;
 
 void inactive() {
-  if (getRunningAvg() > TRESHOLD) {
+  if (getRunningAvg() > THRESHOLD) {
     touched = millis();
     setState(STEPPING);
   }
-  idleOn();
+  fireflyOn();
 }
 
 void breathing() {
@@ -34,24 +33,18 @@ void breathing() {
 }
 
 void stepping() {
-  if (previous == 0){previous = getId();}
   float pressureValue = getRunningAvg();
-  if (pressureValue > TRESHOLD) {
+  if (pressureValue > THRESHOLD) {
     touched = millis();
   }
-  touching = millis();
-  for (int i = 0; i < NEIGHBOURSIZE; i++) {
-    sendMessage(String(neighbours[i]), "breathing");
-  }
-  done = true;
-  while(state == STEPPING){iterateOn();}
+  iterateOn();
 }
 
 void stepped() {
-   if (millis() - touched > 3*60*1000 && lastOn == id) {
-   setState(FADING);
+  if (millis() - touched > 3 * 60 * 1000 && lastOn == id) {
+    setState(FADING);
   }
-  if (getRunningAvg() > TRESHOLD) {
+  if (getRunningAvg() > THRESHOLD) {
     touched = millis();
     setState(STEPPING);
   }
@@ -63,8 +56,10 @@ void fading() {
 }
 
 void off() {
-  if(!done){breathingOff();}
-  if (getRunningAvg() > TRESHOLD) {
+  if (!done) {
+    breathingOff();
+  }
+  if (getRunningAvg() > THRESHOLD) {
     touched = millis();
     setState(STEPPING);
   }
@@ -73,14 +68,26 @@ void off() {
 void setState(State newState) {
   String onstring = "on " + String(id);
   switch (newState) {
-    case INACTIVE: break; //idle
+    case FIREFLY: break;
     case BREATHING: break;
     case STEPPING:
-      sendMessage("all", onstring); break;
-    case STEPPED:
-        for (int i = 0; i < NEIGHBOURSIZE; i++) {
-          sendMessage(String(neighbours[i]), "off");
+      sendMessage("all", onstring);
+      for (int i = 0; i < NEIGHBOURSIZE; i++) {
+        sendMessage(String(neighbours[i]), "breathing");
+      }
+      done = true;
+      if (previous == 0) {
+        previous = getId();
+        if (previous < 1 || previous > 20) {
+          previous == -1;
         }
+      }
+      break;
+    case STEPPED:
+      for (int i = 0; i < NEIGHBOURSIZE; i++) {
+        sendMessage(String(neighbours[i]), "off");
+      }
+      break;
     case FADING: break;
     case OFF: break;
   }
@@ -95,7 +102,9 @@ void setup()
   initColour();
   touched = millis();
   done = false;
-  if(id == 1){setState(INACTIVE);}
+  if (id == 1) {
+    setState(FIREFLY);
+  }
 }
 
 void loop()
@@ -104,7 +113,7 @@ void loop()
   loopMqtt();
   Serial.println(state);
   switch (state) {
-    case INACTIVE: inactive(); break;
+    case FIREFLY: inactive(); break;
     case BREATHING: breathing(); break;
     case STEPPING: stepping(); break;
     case STEPPED: stepped(); break;

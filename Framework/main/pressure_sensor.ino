@@ -29,13 +29,14 @@ float getRunningAvg() {
   return sum / windowSize;
 }
 
-void checkStillStanding() {
+bool checkStillStanding() {
   loopPressureSensor();
-  if (getRunningAvg() < TRESHOLD) {
-    setState(STEPPED);
+  if (getRunningAvg() < THRESHOLD) {
+    return false;
   }
   else {
     touched = millis();
+    return true;
   }
 }
 

@@ -47,8 +47,7 @@ void updateVal(int redVal, int grnVal, int bluVal){
 }
 void iterateOn() {
   for(int i = 0; i< COLOURLENGTH; i++){
-    checkStillStanding();
-    if(state != STEPPING){ return;}
+    if(!checkStillStanding()){setState(STEPPED); return;}
     crossFade(colours[i]);
   }
 }
@@ -111,11 +110,7 @@ void crossFade(int color[3]){
       pixels.setPixelColor(k, pixels.Color(redVal, grnVal, bluVal));
     }
     pixels.show();
-    checkStillStanding();
-    if (state != STEPPING) {
-      updateVal(redVal, grnVal, bluVal);      
-      return;
-    }
+    if(!checkStillStanding()){setState(STEPPED); updateVal(redVal, grnVal, bluVal); return;}  
   }
   // Update current values for next loop
    updateVal(redVal, grnVal, bluVal);      
