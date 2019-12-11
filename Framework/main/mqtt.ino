@@ -44,7 +44,7 @@ void messageReceived(String &topic, String &payload) {
   String msg = payload;
   if(msg == "breathing"&& (state == OFF || state == FIREFLY)){ setState(BREATHING);}
   if(msg == "firefly" && state == OFF){ setState(FIREFLY);}
-  if(msg == "fading"){ setState(FADING);}
+  if(msg == "fading" && state == STEPPED){ setState(FADING);}
   if(msg == "off") {setState(OFF);}
   if(msg.startsWith("on")) {lastOn = getId(); touched = millis();}
 }

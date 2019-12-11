@@ -18,9 +18,10 @@ void fadingOn() {
   breathingOff();
   if (previous != 0) {
     sendMessage(String(previous), "fading");
+    setState(OFF);
   }
   else if(previous == -1) {
-    sendMessage(String(id), "firefly");
+    setState(FIREFLY);
   }
   previous = 0;
 }

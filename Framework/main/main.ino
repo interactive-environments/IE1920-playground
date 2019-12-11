@@ -16,15 +16,20 @@ int lastOn = 0;
 int previous;
 int neighbours[] = {1};
 unsigned long touched;
-bool done;
 State state = OFF;
 int curR, curG, curB;
 
-void inactive() {
+bool checkStepping(){
   if (getRunningAvg() > THRESHOLD) {
     touched = millis();
     setState(STEPPING);
+    return true;
   }
+  return false;
+}
+
+void inactive() {
+  if(checkStepping()){return;}
   fireflyOn();
 }
 
@@ -44,25 +49,18 @@ void stepped() {
   if (millis() - touched > 3 * 60 * 1000 && lastOn == id) {
     setState(FADING);
   }
-  if (getRunningAvg() > THRESHOLD) {
-    touched = millis();
-    setState(STEPPING);
-  }
+    if(checkStepping()){return;}
 }
 
 void fading() {
-  done = false;
   fadingOn();
 }
 
 void off() {
-  if (!done) {
+  if (state != STEPPED || state != STEPPING) {
     breathingOff();
   }
-  if (getRunningAvg() > THRESHOLD) {
-    touched = millis();
-    setState(STEPPING);
-  }
+  if(checkStepping()){return;}
 }
 
 void setState(State newState) {
@@ -75,7 +73,6 @@ void setState(State newState) {
       for (int i = 0; i < NEIGHBOURSIZE; i++) {
         sendMessage(String(neighbours[i]), "breathing");
       }
-      done = true;
       if (previous == 0) {
         previous = getId();
         if (previous < 1 || previous > 20) {
@@ -101,7 +98,6 @@ void setup()
   initMqtt();
   initColour();
   touched = millis();
-  done = false;
   if (id == 1) {
     setState(FIREFLY);
   }
