@@ -4,6 +4,7 @@ void setup()
   Serial.begin(9600);
   initPressureSensor();
   initPixels();
+  initColour();
 }
 
 void loop()
@@ -11,8 +12,8 @@ void loop()
   loopPressureSensor();
   float pressureValue = getRunningAvg();
   Serial.println(pressureValue);
-  if(pressureValue > 3000){
-    showPixels();
+  if(pressureValue > -1){
+    iterateOn();
   } else {
     clearPixels();
   }

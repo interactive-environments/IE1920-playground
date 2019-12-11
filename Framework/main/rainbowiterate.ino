@@ -48,8 +48,7 @@ void updateVal(int redVal, int grnVal, int bluVal){
 void iterateOn() {
   for(int i = 0; i< COLOURLENGTH; i++){
     checkStillStanding();
-    if(state != STEPPING){ break;}
-    if(millis()-touching > 4200){setState(TOOLONGTOUCH); break;}
+    if(state != STEPPING){ return;}
     crossFade(colours[i]);
   }
 }
@@ -115,7 +114,7 @@ void crossFade(int color[3]){
     checkStillStanding();
     if (state != STEPPING) {
       updateVal(redVal, grnVal, bluVal);      
-      break;
+      return;
     }
   }
   // Update current values for next loop

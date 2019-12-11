@@ -3,9 +3,9 @@
 
 const char ssid[] = "iot-net";
 const char pass[] = "interactive";
-//String lastmessage = "0";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
+String lastmessage = "0";
 WiFiClient net;
 MQTTClient client;
 
@@ -30,19 +30,10 @@ void connect() {
   client.subscribe("/" + String(id));
 }
 
-String getMsg() {
-  int index = lastmessage.indexOf(" ");
-  if (index != -1) {
-    return lastmessage.substring(index);
-  } else {
-    return "";
-  }
-}
-
 int getId() {
   int index = lastmessage.indexOf(" ");
   if (index != -1) {
-    return lastmessage.substring(0, index).toInt();
+    return lastmessage.substring(index, lastmessage.length()).toInt(); //dit checken
   } else {
     return 0;
   }
@@ -50,18 +41,16 @@ int getId() {
 
 void messageReceived(String &topic, String &payload) {
   lastmessage = payload; //parser, if in deze state, maak state breathing.
-  int nr = getId();
-  String msg = getMsg();
-  
-  if(msg == "breathing"&& !done){ setState(BREATHING);}
-  if(msg == "idle"){ setState(INACTIVE);}
+  String msg = payload;
+  if(msg == "breathing"&& (state == OFF || state == INACTIVE)){ setState(BREATHING);}
+  if(msg == "idle" && state == OFF){ setState(INACTIVE);}
   if(msg == "fading"){ setState(FADING);}
   if(msg == "off") {setState(OFF);}
-  if(msg == "on") {lastOn = getId(); touched = millis();}
+  if(msg.startsWith("on")) {lastOn = getId(); touched = millis();}
 }
 
 void sendMessage(String target, String msg) {
-  client.publish("/" + target, id + " " + msg);
+  client.publish("/" + target, msg);
 }
 
 void initMqtt() {

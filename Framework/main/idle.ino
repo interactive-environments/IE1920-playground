@@ -5,7 +5,7 @@ void idleOn() {
       pixels.setPixelColor(j, pixels.Color(i / 3, (i / 3 * 2), i / 3));
     }
     pixels.show();
-    waittime(5);
+    waittime(10);
   }
   sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "idle");
   setState(OFF);

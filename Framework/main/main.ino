@@ -7,25 +7,21 @@ enum State {
   BREATHING,
   STEPPING,
   STEPPED,
-  COLOURWAITING,
-  TOOLONGTOUCH,
   FADING,
   OFF
 };
 
-int id = 1;
+int id = 2;
 int lastOn = 0;
 int previous;
-String lastmessage = "0";
-int neighbours[] = {2};
+int neighbours[] = {1};
 unsigned long touched;
 bool done;
 unsigned long touching; 
-State state = INACTIVE;
+State state = OFF;
 int curR, curG, curB;
 
 void inactive() {
-  loopPressureSensor();
   if (getRunningAvg() > TRESHOLD) {
     touched = millis();
     setState(STEPPING);
@@ -47,11 +43,12 @@ void stepping() {
   for (int i = 0; i < NEIGHBOURSIZE; i++) {
     sendMessage(String(neighbours[i]), "breathing");
   }
+  done = true;
   while(state == STEPPING){iterateOn();}
 }
 
-void colourWaiting(){
-  if (millis() - touched > 5000 && lastOn == id) {
+void stepped() {
+   if (millis() - touched > 3*60*1000 && lastOn == id) {
    setState(FADING);
   }
   if (getRunningAvg() > TRESHOLD) {
@@ -60,31 +57,13 @@ void colourWaiting(){
   }
 }
 
-void tooLongTouch(){
-  if (previous != 0) {
-    sendMessage(String(previous), "fading");
-  }
-  while(state == TOOLONGTOUCH){
-    checkStillStanding();
-  }  
-  if(previous == 0){ sendMessage(String(id), "idle");}
-  else{setState(OFF);}
-}
-
-void stepped() {
-  for (int i = 0; i < NEIGHBOURSIZE; i++) {
-    sendMessage(String(neighbours[i]), "off");
-  }
-  setState(COLOURWAITING);  
-}
-
 void fading() {
+  done = false;
   fadingOn();
 }
 
 void off() {
-  breathingOff();
-  loopPressureSensor();
+  if(!done){breathingOff();}
   if (getRunningAvg() > TRESHOLD) {
     touched = millis();
     setState(STEPPING);
@@ -92,13 +71,16 @@ void off() {
 }
 
 void setState(State newState) {
+  String onstring = "on " + String(id);
   switch (newState) {
     case INACTIVE: break; //idle
     case BREATHING: break;
     case STEPPING:
-      sendMessage("all", "on"); break;
+      sendMessage("all", onstring); break;
     case STEPPED:
-      //sendMessage("all", "on"); break;
+        for (int i = 0; i < NEIGHBOURSIZE; i++) {
+          sendMessage(String(neighbours[i]), "off");
+        }
     case FADING: break;
     case OFF: break;
   }
@@ -126,8 +108,6 @@ void loop()
     case BREATHING: breathing(); break;
     case STEPPING: stepping(); break;
     case STEPPED: stepped(); break;
-    case COLOURWAITING: colourWaiting(); break;
-    case TOOLONGTOUCH: tooLongTouch(); break;
     case FADING: fading(); break;
     case OFF: off(); break;
   }
