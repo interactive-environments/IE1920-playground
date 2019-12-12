@@ -26,11 +26,3 @@ bool stateChangeCheckWithDelay(int wait_in_millis) {
   }
   return false;
 }
-
-
-void breathingOff() {
-  for(int j = 0; j < NUMPIXELS; j++){
-    pixels.setPixelColor(j, pixels.Color(0, 0, 0));
-  }
-  pixels.show();
-}

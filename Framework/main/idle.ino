@@ -7,6 +7,7 @@ void fireflyOn() {
     pixels.show();
     if(stateChangeCheckWithDelay(10)){return;}
   }
-  sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");
   setState(OFF);
+  sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");
+  sendMessage("all", "failsafe");
 }

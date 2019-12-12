@@ -1,5 +1,6 @@
 #define THRESHOLD 4
 #define NEIGHBOURSIZE 1
+#define WAITTIME 3*10*1000
 //#define NEIGHBOURSIZE (sizeof(colours)/sizeof(neighbours[0]))
 
 enum State {
@@ -11,11 +12,12 @@ enum State {
   OFF
 };
 
-int id = 2;
+int id = 1;
 int lastOn = 0;
 int previous;
-int neighbours[] = {1};
+int neighbours[] = {2};
 unsigned long touched;
+unsigned long failsafe;
 State state = OFF;
 int curR, curG, curB;
 
@@ -46,7 +48,7 @@ void stepping() {
 }
 
 void stepped() {
-  if (millis() - touched > 3 * 60 * 1000 && lastOn == id) {
+  if (millis() - touched > WAITTIME && lastOn == id) {
     setState(FADING);
   }
     if(checkStepping()){return;}
@@ -58,9 +60,10 @@ void fading() {
 
 void off() {
   if (state != STEPPED || state != STEPPING) {
-    breathingOff();
+    clearPixels();
   }
   if(checkStepping()){return;}
+  if((millis()-failsafe)>100000 && id == 1){setState(FIREFLY);}
 }
 
 void setState(State newState) {
@@ -74,9 +77,10 @@ void setState(State newState) {
         sendMessage(String(neighbours[i]), "breathing");
       }
       if (previous == 0) {
-        previous = getId();
+        previous = lastOn;
+        Serial.println(previous);
         if (previous < 1 || previous > 20) {
-          previous == -1;
+          previous = -1;
         }
       }
       break;
@@ -107,7 +111,7 @@ void loop()
 {
   loopPressureSensor();
   loopMqtt();
-  Serial.println(state);
+  //Serial.println(state);
   switch (state) {
     case FIREFLY: inactive(); break;
     case BREATHING: breathing(); break;
