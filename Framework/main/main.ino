@@ -1,6 +1,7 @@
-#define THRESHOLD 4
-#define NEIGHBOURSIZE 1
-#define WAITTIME 3*10*1000
+#define THRESHOLD 2
+#define NEIGHBOURSIZE 2
+#define POLENEIGHBOURSIZE 3
+#define WAITTIME 30*1000
 //#define NEIGHBOURSIZE (sizeof(colours)/sizeof(neighbours[0]))
 
 enum State {
@@ -9,17 +10,19 @@ enum State {
   STEPPING,
   STEPPED,
   FADING,
+  POLE,
   OFF
 };
 
-int id = 1;
+int id = 4;
 int lastOn = 0;
-int previous;
-int neighbours[] = {2};
+int neighbours[] = {2, 3};
+int poleNeighbours[] = {2,3,4};
 unsigned long touched;
 unsigned long failsafe;
 State state = OFF;
 int curR, curG, curB;
+int poleR, poleG, poleB;
 
 bool checkStepping(){
   if (getRunningAvg() > THRESHOLD) {
@@ -48,14 +51,18 @@ void stepping() {
 }
 
 void stepped() {
-  if (millis() - touched > WAITTIME && lastOn == id) {
+  if (millis() - touched > WAITTIME) {
     setState(FADING);
   }
-    if(checkStepping()){return;}
+  if(checkStepping()){return;}
 }
 
 void fading() {
   fadingOn();
+}
+
+void pole(){
+  poleOn();
 }
 
 void off() {
@@ -68,6 +75,7 @@ void off() {
 
 void setState(State newState) {
   String onstring = "on " + String(id);
+  String randomPole = "pole " + String(random(250)) + "," + String(random(250)) + "." + String(random(250));
   switch (newState) {
     case FIREFLY: break;
     case BREATHING: break;
@@ -76,12 +84,8 @@ void setState(State newState) {
       for (int i = 0; i < NEIGHBOURSIZE; i++) {
         sendMessage(String(neighbours[i]), "breathing");
       }
-      if (previous == 0) {
-        previous = lastOn;
-        Serial.println(previous);
-        if (previous < 1 || previous > 20) {
-          previous = -1;
-        }
+      for (int i = 0; i < POLENEIGHBOURSIZE; i++) {
+        sendMessage(String(neighbours[i]), randomPole);
       }
       break;
     case STEPPED:
@@ -118,6 +122,7 @@ void loop()
     case STEPPING: stepping(); break;
     case STEPPED: stepped(); break;
     case FADING: fading(); break;
+    case POLE: pole(); break;
     case OFF: off(); break;
   }
 }

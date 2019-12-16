@@ -5,7 +5,7 @@ void fireflyOn() {
       pixels.setPixelColor(j, pixels.Color(i / 3, (i / 3 * 2), i / 3));
     }
     pixels.show();
-    if(stateChangeCheckWithDelay(10)){return;}
+    if(stateChangeCheckWithDelay(0)){return;}
   }
   setState(OFF);
   sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");

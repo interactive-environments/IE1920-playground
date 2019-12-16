@@ -33,10 +33,20 @@ void connect() {
 int getId() {
   int index = lastmessage.indexOf(" ");
   if (index != -1) {
-    return lastmessage.substring(index, lastmessage.length()).toInt(); //dit checken
+    return lastmessage.substring(index, lastmessage.length()).toInt(); 
   } else {
     return 0;
   }
+}
+
+void polemsg(){
+    int space = lastmessage.indexOf(" ");
+    int comma = lastmessage.indexOf(",");
+    int point = lastmessage.indexOf(".");
+    poleR = lastmessage.substring(space, comma).toInt(); 
+    poleG = lastmessage.substring(comma, point).toInt(); 
+    poleB = lastmessage.substring(point, lastmessage.length()).toInt(); 
+    setState(POLE);
 }
 
 void messageReceived(String &topic, String &payload) {
@@ -48,6 +58,7 @@ void messageReceived(String &topic, String &payload) {
   if(msg == "off" && (state == BREATHING || state == FIREFLY)) {setState(OFF);}
   if(msg.startsWith("on")) {lastOn = getId(); touched = millis();}
   if(msg == "failsafe"){failsafe = millis();}
+  if(msg.startsWith("pole")){polemsg();}
 }
 
 void sendMessage(String target, String msg) {

@@ -16,13 +16,4 @@ void fadingOn() {
     if(stateChangeCheckWithDelay(10)){return;}
   }
   clearPixels();
-  if (previous > 0) {
-    sendMessage(String(previous), "fading");
-    setState(OFF);
-  }
-  else if(previous == -1) {
-    setState(FIREFLY);
-  }
-  else if(previous == 0){setState(OFF);}
-  previous = 0;
 }

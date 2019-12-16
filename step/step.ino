@@ -12,8 +12,8 @@ void loop()
   loopPressureSensor();
   float pressureValue = getRunningAvg();
   Serial.println(pressureValue);
-  if(pressureValue > -1){
-    iterateOn();
+  if(pressureValue > 4){
+    showPixels();
   } else {
     clearPixels();
   }
