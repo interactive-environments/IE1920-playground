@@ -8,8 +8,9 @@ void fireflyOn() {
     if (stateChangeCheckWithDelay(5)) {
       return;
     }
+    if(delta == -1 && i == 100){sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");}
   }
   setState(OFF);
-  sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");
+  //sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");
   sendMessage("all", "failsafe");
 }
