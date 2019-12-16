@@ -13,7 +13,11 @@ void fadingOn() {
       pixels.setPixelColor(k, pixels.Color(curR, curG, curB));
     }
     pixels.show();
-    if(stateChangeCheckWithDelay(10)){return;}
+    if (stateChangeCheckWithDelay(10)) {
+      return;
+    }
   }
   clearPixels();
+  setState(OFF);
+  if(lastOn == id){setState(FIREFLY);}
 }

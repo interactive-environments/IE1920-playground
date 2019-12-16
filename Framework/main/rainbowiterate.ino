@@ -37,17 +37,20 @@ void clearPixels() {
   pixels.show();
 }
 
-void updateVal(int redVal, int grnVal, int bluVal){
-      prevR = redVal;
-      prevG = grnVal;
-      prevB = bluVal;
-      curR = redVal;
-      curG = grnVal;
-      curB = bluVal;
+void updateVal(int redVal, int grnVal, int bluVal) {
+  prevR = redVal;
+  prevG = grnVal;
+  prevB = bluVal;
+  curR = redVal;
+  curG = grnVal;
+  curB = bluVal;
 }
 void iterateOn() {
-  for(int i = 0; i< COLOURLENGTH; i++){
-    if(!checkStillStanding()){setState(STEPPED); return;}
+  for (int i = 0; i < COLOURLENGTH; i++) {
+    if (!checkStillStanding()) {
+      setState(STEPPED);
+      return;
+    }
     crossFade(colours[i]);
   }
 }
@@ -91,7 +94,7 @@ int calculateVal(int step, int val, int i) {
 */
 
 
-void crossFade(int color[3]){
+void crossFade(int color[3]) {
   // Convert to 0-255
   int R = (color[0] * 255) / 100;
   int G = (color[1] * 255) / 100;
@@ -110,8 +113,12 @@ void crossFade(int color[3]){
       pixels.setPixelColor(k, pixels.Color(redVal, grnVal, bluVal));
     }
     pixels.show();
-    if(!checkStillStanding()){setState(STEPPED); updateVal(redVal, grnVal, bluVal); return;}  
+    if (!checkStillStanding()) {
+      setState(STEPPED);
+      updateVal(redVal, grnVal, bluVal);
+      return;
+    }
   }
   // Update current values for next loop
-   updateVal(redVal, grnVal, bluVal);      
+  updateVal(redVal, grnVal, bluVal);
 }
