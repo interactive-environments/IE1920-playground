@@ -31,3 +31,12 @@ bool stateChangeCheckWithDelay(int wait_in_millis) {
   }
   return false;
 }
+
+void bang(){  
+  for (int i = 0; i < NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pixels.Color(250, 0, 250));
+  }
+  pixels.show();
+  delay(300);
+  pixels.clear();
+}

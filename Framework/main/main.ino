@@ -1,4 +1,4 @@
-#define THRESHOLD 1             //change per step
+#define THRESHOLD 4         //change per step
 #define POLENEIGHBOURSIZE 3
 #define WAITTIME 30*1000
 #define NEIGHBOURSIZE (sizeof(neighbours)/sizeof(neighbours[0]))
@@ -14,10 +14,10 @@ enum State {
   OFF
 };
 
-int id = 2;                         //change per step
+int id = 16;                         //change per step
 int lastOn = 0;
-int neighbours[] = {1,3};            //change per step
-int poleNeighbours[] = {1, 3, 4}; //change per step
+int neighbours[] = {12};            //change per step
+int poleNeighbours[] = {13,14,15}; //change per step
 unsigned long touched;
 unsigned long failsafe;
 unsigned long lastsend;
@@ -150,6 +150,7 @@ void setup()
   initPressureSensor();
   initMqtt();
   initColour();
+  bang();
   lastsendstepped = millis();
   lastsend = millis();
   touched = millis();
