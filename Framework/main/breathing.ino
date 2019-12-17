@@ -24,6 +24,7 @@ bool stateChangeCheckWithDelay(int wait_in_millis) {
   while (millis() < starttime + wait_in_millis) {
     loopPressureSensor();
     loopMqtt();
+    if(checkStillStanding()) { return true; }
     if (state != startstate) {
       return true;
     }

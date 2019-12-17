@@ -1,4 +1,4 @@
-#define THRESHOLD 2             //change per step
+#define THRESHOLD 1             //change per step
 #define POLENEIGHBOURSIZE 3
 #define WAITTIME 30*1000
 #define NEIGHBOURSIZE (sizeof(neighbours)/sizeof(neighbours[0]))
@@ -14,15 +14,18 @@ enum State {
   OFF
 };
 
-int id = 3;                         //change per step
+int id = 2;                         //change per step
 int lastOn = 0;
-int neighbours[] = {2};            //change per step
-int poleNeighbours[] = {1, 2, 4}; //change per step
+int neighbours[] = {1,3};            //change per step
+int poleNeighbours[] = {1, 3, 4}; //change per step
 unsigned long touched;
 unsigned long failsafe;
+unsigned long lastsend;
+unsigned long lastsendstepped;
 State state = OFF;
 int curR, curG, curB;
 int poleR, poleG, poleB;
+String stepstring = "step " + String(id);
 
 bool checkStepping() {
   if (getRunningAvg() > THRESHOLD) {
@@ -50,6 +53,7 @@ void stepping() {
     touched = millis();
   }
   iterateOn();
+  if(millis()-lastsend > 10000){ sendMessage("all", stepstring); lastsend = millis();}
 }
 
 void stepped() {
@@ -59,6 +63,7 @@ void stepped() {
   if (checkStepping()) {
     return;
   }
+  if(millis()-lastsendstepped > 10000){ sendMessage("all", stepstring); lastsendstepped = millis();}
 }
 
 void fading() {
@@ -80,7 +85,7 @@ void off() {
   if (checkStepping()) {
     return;
   }
-  if ((millis() - failsafe) > 30000 && id == 1) {
+  if ((millis() - failsafe) > 15000 && id == 1) {
     setState(FIREFLY);
   }
 }
@@ -97,7 +102,8 @@ void setState(State newState) {
       {
         sendMessage("all", onstring);
         bool neighb = false;
-        randR = random(250); randG = random(250); randB = random(250);
+        randR = random(50,250); randG = random(50,250); randB = random(50,250);
+        if(randR+randG>250){randB = 0;} if(randR+randB>250){randG = 0;} if(randB+randG>250){randR = 0;}
         randomPole = "pole " + String(randR) + "," + String(randG) + "." + String(randB);
         randomNPole = "npole " + String(randR) + "," + String(randG) + "." + String(randB);
         for (int i = 0; i < POLENEIGHBOURSIZE; i++) { //stuur naar alles op de pole dat ze aan moeten
@@ -144,6 +150,8 @@ void setup()
   initPressureSensor();
   initMqtt();
   initColour();
+  lastsendstepped = millis();
+  lastsend = millis();
   touched = millis();
   if (id == 1) {
     setState(FIREFLY);

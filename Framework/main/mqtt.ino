@@ -65,9 +65,12 @@ void messageReceived(String &topic, String &payload) {
   }
   if (msg.startsWith("on")) {
     lastOn = getId();
-    touched = millis();
+    //touched = millis();
   }
   if (msg == "failsafe") {
+    failsafe = millis();
+  }
+  if (msg.startsWith("step")){
     failsafe = millis();
   }
   if (msg.startsWith("pole") && (state == OFF || state == FIREFLY || state == BREATHING)) {
