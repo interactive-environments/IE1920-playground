@@ -1,6 +1,7 @@
 #define THRESHOLD 4         //change per step
 #define POLENEIGHBOURSIZE 3
 #define WAITTIME 30*1000
+#define POLETIME 300
 #define NEIGHBOURSIZE (sizeof(neighbours)/sizeof(neighbours[0]))
 
 enum State {
@@ -14,10 +15,10 @@ enum State {
   OFF
 };
 
-int id = 16;                         //change per step
+int id = 1;                         //change per step
 int lastOn = 0;
-int neighbours[] = {12};            //change per step
-int poleNeighbours[] = {13,14,15}; //change per step
+int neighbours[] = {5,14,17,18};         //change per step
+int poleNeighbours[] = {2,3,4}; //change per step
 unsigned long touched;
 unsigned long failsafe;
 unsigned long lastsend;
