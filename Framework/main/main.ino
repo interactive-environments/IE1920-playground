@@ -12,7 +12,7 @@ struct Edge {
 int getNeighboursSize(int id); //prototype
 
 Var vars[3] = {
-  {"threshhold", 4},
+  {"threshold", 4},
   {"waittime", 30 * 1000},
   {"poletime", 300}
 };
@@ -28,7 +28,7 @@ enum State {
   OFF
 };
 
-int id = 1;                         //change per step
+int id = 15;                         //change per step
 int lastOn = 0;
 const int NEIGHBOURSIZE = getNeighboursSize(id);
 int* neighbours = new int[8];
@@ -205,7 +205,8 @@ void loop()
 {
   Serial.println("old: ");
   Serial.print(getVar("threshold").value);
-  sendMessage("all", "change threshold 3");
+  //sendMessage("all", "change threshold 3");
+  changemessage("change threshold 3");
   Serial.println("new: ");
   Serial.print(getVar("threshold").value);
   loopPressureSensor();
