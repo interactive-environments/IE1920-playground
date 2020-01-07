@@ -32,7 +32,7 @@ float getRunningAvg() {
 
 bool checkStillStanding() {
   loopPressureSensor();
-  if (getRunningAvg() < THRESHOLD) {
+  if (getRunningAvg() < getVar("threshold").value) {
     return false;
   }
   else {

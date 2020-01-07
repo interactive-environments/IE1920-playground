@@ -48,6 +48,14 @@ void polemsg() {
   poleB = lastmessage.substring(point+1, lastmessage.length()).toInt();
 }
 
+void changemessage(String msg){
+  int first = msg.indexOf(" ");
+  int second = msg.indexOf(" ", first);
+  String varname = msg.substring(first, second);
+  Var var = getVar(varname);
+  var.value = msg.substring(second+1, msg.length()).toInt();
+}
+
 void messageReceived(String &topic, String &payload) {
   lastmessage = payload; //parser, if in deze state, maak state breathing.
   String msg = payload;
@@ -81,6 +89,7 @@ void messageReceived(String &topic, String &payload) {
     polemsg();
     setState(NPOLE);
   }
+  if(msg.startsWith("change")){ changemessage(msg);}
 }
 
 void sendMessage(String target, String msg) {

@@ -6,7 +6,7 @@ void poleOn() {
     pixels.setPixelColor(i, pixels.Color(poleR, poleG, poleB));
   }
   pixels.show();
-  if (stateChangeCheckWithDelay(POLETIME)) {
+  if (stateChangeCheckWithDelay(getVar("poletime").value)) {
     return;
   }
   fadeR = poleR; fadeG = poleG; fadeB = poleB;
@@ -38,7 +38,7 @@ void nPoleOn() {
     pixels.setPixelColor(i, pixels.Color(poleR, poleG, poleB));
   }
   pixels.show();
-  if (stateChangeCheckWithDelay(POLETIME)) {
+  if (stateChangeCheckWithDelay(getVar("polettime").value)) {
     return;
   }
   fadingOut();

@@ -1,8 +1,21 @@
-#define THRESHOLD 4         //change per step
 #define POLENEIGHBOURSIZE 3
-#define WAITTIME 30*1000
-#define POLETIME 300
-#define NEIGHBOURSIZE (sizeof(neighbours)/sizeof(neighbours[0]))
+
+struct Var {
+  String varName;
+  int value;
+};
+
+struct Edge {
+  int a, b;
+};
+
+int getNeighboursSize(int id); //prototype
+
+Var vars[3] = {
+  {"threshhold", 4},
+  {"waittime", 30 * 1000},
+  {"poletime", 300}
+};
 
 enum State {
   FIREFLY,
@@ -17,8 +30,9 @@ enum State {
 
 int id = 1;                         //change per step
 int lastOn = 0;
-int neighbours[] = {5,14,17,18};         //change per step
-int poleNeighbours[] = {2,3,4}; //change per step
+const int NEIGHBOURSIZE = getNeighboursSize(id);
+int* neighbours = new int[8];
+int* poleNeighbours = new int[3];
 unsigned long touched;
 unsigned long failsafe;
 unsigned long lastsend;
@@ -28,8 +42,17 @@ int curR, curG, curB;
 int poleR, poleG, poleB;
 String stepstring = "step " + String(id);
 
+Var getVar(String variableName) {
+  for (int i = 0; i < (sizeof(vars) / sizeof(vars[0])); i++) {
+    if (variableName == vars[i].varName) {
+      return vars[i];
+    }
+  }
+}
+
+
 bool checkStepping() {
-  if (getRunningAvg() > THRESHOLD) {
+  if (getRunningAvg() > getVar("threshold").value) {
     touched = millis();
     setState(STEPPING);
     return true;
@@ -50,21 +73,27 @@ void breathing() {
 
 void stepping() {
   float pressureValue = getRunningAvg();
-  if (pressureValue > THRESHOLD) {
+  if (pressureValue > getVar("threshold").value) {
     touched = millis();
   }
   iterateOn();
-  if(millis()-lastsend > 10000){ sendMessage("all", stepstring); lastsend = millis();}
+  if (millis() - lastsend > 10000) {
+    sendMessage("all", stepstring);
+    lastsend = millis();
+  }
 }
 
 void stepped() {
-  if (millis() - touched > WAITTIME) {
+  if (millis() - touched > getVar("waittime").value) {
     setState(FADING);
   }
   if (checkStepping()) {
     return;
   }
-  if(millis()-lastsendstepped > 10000){ sendMessage("all", stepstring); lastsendstepped = millis();}
+  if (millis() - lastsendstepped > 10000) {
+    sendMessage("all", stepstring);
+    lastsendstepped = millis();
+  }
 }
 
 void fading() {
@@ -93,7 +122,7 @@ void off() {
 
 void setState(State newState) {
   String onstring = "on " + String(id);
-  int randR, randG, randB; 
+  int randR, randG, randB;
   String randomPole;
   String randomNPole;
   switch (newState) {
@@ -103,12 +132,18 @@ void setState(State newState) {
       {
         sendMessage("all", onstring);
         bool neighb = false;
-        randR = random(50,250); randG = random(50,250); randB = random(50,250);
-        if(randR+randG>250){randB = 0;} if(randR+randB>250){randG = 0;} if(randB+randG>250){randR = 0;}
+        randR = random(50, 250); randG = random(50, 250); randB = random(50, 250);
+        if (randR + randG > 250) {
+          randB = 0;
+        } if (randR + randB > 250) {
+          randG = 0;
+        } if (randB + randG > 250) {
+          randR = 0;
+        }
         randomPole = "pole " + String(randR) + "," + String(randG) + "." + String(randB);
         randomNPole = "npole " + String(randR) + "," + String(randG) + "." + String(randB);
         for (int i = 0; i < POLENEIGHBOURSIZE; i++) { //stuur naar alles op de pole dat ze aan moeten
-          neighb = false;                             
+          neighb = false;
           for (int j = 0; j < NEIGHBOURSIZE; j++) {                 //check if pole neighbour is ook normale neighbour
             if (poleNeighbours[i] == neighbours[j]) {               //als dat zo is
               Serial.println(neighbours[j]);
@@ -121,12 +156,16 @@ void setState(State newState) {
           }
         }
         bool inlist = false;
-        for (int i = 0; i < NEIGHBOURSIZE; i++) {         
+        for (int i = 0; i < NEIGHBOURSIZE; i++) {
           inlist = false;
-          for (int j = 0; j < POLENEIGHBOURSIZE; j++){
-            if(neighbours[i] == poleNeighbours[j]){inlist = true;}  //als een neighbour ook een poleneighbour is
+          for (int j = 0; j < POLENEIGHBOURSIZE; j++) {
+            if (neighbours[i] == poleNeighbours[j]) {
+              inlist = true; //als een neighbour ook een poleneighbour is
+            }
           }
-          if(!inlist){sendMessage(String(neighbours[i]), "breathing");} //dan hoef je niet breathing te sturen, anders wel
+          if (!inlist) {
+            sendMessage(String(neighbours[i]), "breathing"); //dan hoef je niet breathing te sturen, anders wel
+          }
         }
         break;
       }
@@ -148,6 +187,8 @@ void setState(State newState) {
 void setup()
 {
   Serial.begin(9600);
+  neighbours = getNeighbours(neighbours, id);
+  poleNeighbours = getPoleNeighbours(poleNeighbours, id);
   initPressureSensor();
   initMqtt();
   initColour();
@@ -162,6 +203,11 @@ void setup()
 
 void loop()
 {
+  Serial.println("old: ");
+  Serial.print(getVar("threshold").value);
+  sendMessage("all", "change threshold 3");
+  Serial.println("new: ");
+  Serial.print(getVar("threshold").value);
   loopPressureSensor();
   loopMqtt();
   switch (state) {
