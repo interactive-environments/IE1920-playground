@@ -26,7 +26,7 @@ float getRunningAvg() {
   for (int i = 0; i < windowSize; i++) {
     sum += values[i];
   }
-  Serial.println(sum/windowSize);
+  //Serial.println(sum/windowSize);
   return sum / windowSize;
 }
 

@@ -146,7 +146,7 @@ void setState(State newState) {
           neighb = false;
           for (int j = 0; j < NEIGHBOURSIZE; j++) {                 //check if pole neighbour is ook normale neighbour
             if (poleNeighbours[i] == neighbours[j]) {               //als dat zo is
-              Serial.println(neighbours[j]);
+              //Serial.println(neighbours[j]);
               sendMessage(String(poleNeighbours[i]), randomNPole); //stuur dan eerst aan daarna gaan breathen
               neighb = true;
             }
@@ -203,12 +203,6 @@ void setup()
 
 void loop()
 {
-  Serial.println("old: ");
-  Serial.print(getVar("threshold").value);
-  //sendMessage("all", "change threshold 3");
-  changemessage("change threshold 3");
-  Serial.println("new: ");
-  Serial.print(getVar("threshold").value);
   loopPressureSensor();
   loopMqtt();
   switch (state) {
