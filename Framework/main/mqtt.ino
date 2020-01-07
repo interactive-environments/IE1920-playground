@@ -52,8 +52,8 @@ void changemessage(String msg){
   int first = msg.indexOf(" ");
   int second = msg.indexOf(" ", first+1);
   String varname = msg.substring(first+1, second);
-  Var var = getVar(varname);
-  var.value = msg.substring(second+1, msg.length()).toInt();
+  Var* var = getVarPtr(varname);
+  var->value = msg.substring(second+1, msg.length()).toInt();
 }
 
 void messageReceived(String &topic, String &payload) {

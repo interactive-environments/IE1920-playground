@@ -42,6 +42,16 @@ int curR, curG, curB;
 int poleR, poleG, poleB;
 String stepstring = "step " + String(id);
 
+Var* getVarPtr(String variableName) {
+  Var* ptr = 0;
+  for (int i = 0; i < (sizeof(vars) / sizeof(vars[0])); i++) {
+    if (variableName == vars[i].varName) {
+      ptr = &(vars[i]);
+      return ptr;
+    }
+  }
+}
+
 Var getVar(String variableName) {
   for (int i = 0; i < (sizeof(vars) / sizeof(vars[0])); i++) {
     if (variableName == vars[i].varName) {
