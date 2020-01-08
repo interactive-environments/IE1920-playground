@@ -44,52 +44,59 @@ void polemsg() {
   int comma = lastmessage.indexOf(",");
   int point = lastmessage.indexOf(".");
   poleR = lastmessage.substring(space, comma).toInt();
-  poleG = lastmessage.substring(comma+1, point).toInt();
-  poleB = lastmessage.substring(point+1, lastmessage.length()).toInt();
+  poleG = lastmessage.substring(comma + 1, point).toInt();
+  poleB = lastmessage.substring(point + 1, lastmessage.length()).toInt();
 }
 
-void changemessage(String msg){
+void changemessage(String msg) {
   int first = msg.indexOf(" ");
-  int second = msg.indexOf(" ", first+1);
-  String varname = msg.substring(first+1, second);
-  Var* var = getVarPtr(varname);
-  var->value = msg.substring(second+1, msg.length()).toInt();
+  int second = msg.indexOf(" ", first + 1);
+  String varname = msg.substring(first + 1, second);
+  int value = msg.substring(second + 1, msg.length()).toInt();
+  changeVar(varname, value);
 }
 
 void messageReceived(String &topic, String &payload) {
   lastmessage = payload; //parser, if in deze state, maak state breathing.
   String msg = payload;
-  if (msg == "breathing" && (state == OFF || state == FIREFLY)) {
-    setState(BREATHING);
+  if (getVar("setting").value == 1) {
+    if (msg == "breathing" && (state == OFF || state == FIREFLY)) {
+      setState(BREATHING);
+    }
+    if (msg == "firefly" && state == OFF) {
+      setState(FIREFLY);
+    }
+    if (msg == "fading" && state == STEPPED || state == POLE || state == NPOLE) {
+      setState(FADING);
+    }
+    if (msg == "off" && (state == BREATHING || state == FIREFLY || state == POLE || state == NPOLE)) {
+      setState(OFF);
+    }
+    if (msg.startsWith("on")) {
+      lastOn = getId();
+      //touched = millis();
+    }
+    if (msg == "failsafe") {
+      failsafe = millis();
+    }
+    if (msg.startsWith("step")) {
+      failsafe = millis();
+    }
+    if (msg.startsWith("pole") && (state == OFF || state == FIREFLY || state == BREATHING)) {
+      polemsg();
+      setState(POLE);
+    }
+    if (msg.startsWith("npole") && (state == OFF || state == FIREFLY || state == BREATHING)) {
+      polemsg();
+      setState(NPOLE);
+    }
+    if (msg.startsWith("change")) {
+      changemessage(msg);
+    }
   }
-  if (msg == "firefly" && state == OFF) {
-    setState(FIREFLY);
+  else if(getVar("setting").value == 2){
+    gameMsg(msg);
   }
-  if (msg == "fading" && state == STEPPED || state == POLE || state == NPOLE) {
-    setState(FADING);
-  }
-  if (msg == "off" && (state == BREATHING || state == FIREFLY || state == POLE || state == NPOLE)) {
-    setState(OFF);
-  }
-  if (msg.startsWith("on")) {
-    lastOn = getId();
-    //touched = millis();
-  }
-  if (msg == "failsafe") {
-    failsafe = millis();
-  }
-  if (msg.startsWith("step")){
-    failsafe = millis();
-  }
-  if (msg.startsWith("pole") && (state == OFF || state == FIREFLY || state == BREATHING)) {
-    polemsg();
-    setState(POLE);
-  }
-  if (msg.startsWith("npole") && (state == OFF || state == FIREFLY || state == BREATHING)) {
-    polemsg();
-    setState(NPOLE);
-  }
-  if(msg.startsWith("change")){ changemessage(msg);}
 }
 
 void sendMessage(String target, String msg) {

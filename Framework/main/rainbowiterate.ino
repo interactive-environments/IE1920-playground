@@ -118,6 +118,7 @@ void crossFade(int color[3]) {
       updateVal(redVal, grnVal, bluVal);
       return;
     }
+    if(stateChangeCheck()){return;}
   }
   // Update current values for next loop
   updateVal(redVal, grnVal, bluVal);

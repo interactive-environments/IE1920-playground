@@ -9,12 +9,29 @@ struct Edge {
   int a, b;
 };
 
+enum GameState {
+  GAMEFIREFLY,
+  GAMESTEPPED,
+  GAMECORRECT,
+  GAMEOFF
+};
+
+struct Pair{
+  int one, two;
+};
+
+struct Colour{
+  int red, green, blue;
+};
+
 int getNeighboursSize(int id); //prototype
 
-Var vars[3] = {
+Var vars[] = {
   {"threshold", 4},
   {"waittime", 30 * 1000},
-  {"poletime", 300}
+  {"poletime", 300},
+  {"setting", 1},
+  {"goalscore", 10}
 };
 
 enum State {
@@ -42,12 +59,10 @@ int curR, curG, curB;
 int poleR, poleG, poleB;
 String stepstring = "step " + String(id);
 
-Var* getVarPtr(String variableName) {
-  Var* ptr = 0;
+void changeVar(String variableName, int value) {
   for (int i = 0; i < (sizeof(vars) / sizeof(vars[0])); i++) {
     if (variableName == vars[i].varName) {
-      ptr = &(vars[i]);
-      return ptr;
+      vars[i].value = value;
     }
   }
 }
@@ -64,7 +79,8 @@ Var getVar(String variableName) {
 bool checkStepping() {
   if (getRunningAvg() > getVar("threshold").value) {
     touched = millis();
-    setState(STEPPING);
+    if(getVar("setting").value == 1){setState(STEPPING);}
+    else if(getVar("setting").value == 2){ setGameState(GAMESTEPPED);}
     return true;
   }
   return false;
@@ -215,14 +231,17 @@ void loop()
 {
   loopPressureSensor();
   loopMqtt();
-  switch (state) {
-    case FIREFLY: inactive(); break;
-    case BREATHING: breathing(); break;
-    case STEPPING: stepping(); break;
-    case STEPPED: stepped(); break;
-    case FADING: fading(); break;
-    case POLE: pole(); break;
-    case NPOLE: npole(); break;
-    case OFF: off(); break;
+  if (getVar("setting").value == 1) {
+    switch (state) {
+      case FIREFLY: inactive(); break;
+      case BREATHING: breathing(); break;
+      case STEPPING: stepping(); break;
+      case STEPPED: stepped(); break;
+      case FADING: fading(); break;
+      case POLE: pole(); break;
+      case NPOLE: npole(); break;
+      case OFF: off(); break;
+    }
   }
+  else if(getVar("setting").value == 2){ settingup(); gamemain(); }
 }

@@ -18,8 +18,22 @@ void breathingOn() {
   }
 }
 
+bool stateChangeCheck() {
+  State startstate = state;
+  int cursetting = getVar("setting").value;
+    loopPressureSensor();
+    loopMqtt();
+    if(checkStillStanding()) { return true; }
+    if (state != startstate) {
+      return true;
+    }
+    if (getVar("setting").value != cursetting){return true;}
+    return false;
+}
+
 bool stateChangeCheckWithDelay(int wait_in_millis) {
   State startstate = state;
+  int cursetting = getVar("setting").value;
   unsigned long starttime = millis();
   while (millis() < starttime + wait_in_millis) {
     loopPressureSensor();
@@ -28,6 +42,7 @@ bool stateChangeCheckWithDelay(int wait_in_millis) {
     if (state != startstate) {
       return true;
     }
+    if (getVar("setting").value != cursetting){return true;}
   }
   return false;
 }
