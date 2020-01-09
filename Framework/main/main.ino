@@ -52,7 +52,8 @@ Var vars[] = {
   {"remembertime", 3 * 1000},
   {"m_release", 3000},
   {"m_firefly_period", 1000},
-  {"m_timeout_period", 10000}
+  {"m_timeout_period", 10000},
+  {"noofgamesteps", 20}
 };
 
 int id = 15;                         //change per step

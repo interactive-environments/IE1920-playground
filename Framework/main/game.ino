@@ -9,6 +9,7 @@ int blue = -1;
 bool firstsend;
 int savestart;
 int saveend;
+int nosteps;
 
 Colour gamecolours[] = {
   {250, 0, 0},
@@ -55,7 +56,7 @@ void colourmessage(String msg) {
 }
 
 bool checkifright() {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < nosteps/2; i++) {
     if (pairs[i].one == savestart) {
       if (pairs[i].two == saveend) {
         return true;
@@ -103,7 +104,7 @@ void gameMsg(String msg) {
   if (msg.startsWith("step")) {
     failsafe = millis();
   }
-  if (msg == "firefly" && state == OFF) {
+  if (msg == "gamefirefly" && gameState == GAMEOFF) {
     setGameState(GAMEFIREFLY);
   }
   if (msg.startsWith("colour")) {
@@ -127,24 +128,24 @@ void gameMsg(String msg) {
 }
 
 void makepairs() {
-  bool nr[20];
-  for (int i = 0; i < 20; i++) {
+  bool nr[nosteps];
+  for (int i = 0; i < nosteps; i++) {
     nr[i] = false;
   }
-  for (int x = 0; x < 10; x++) {
-    int i = random(19);
+  for (int x = 0; x < nosteps/2; x++) {
+    int i = random(nosteps-1);
     while (nr[i]) {
-      i = random(19);
+      i = random(nosteps-1);
     }
     nr[i] = true;
-    int j = random(19);
+    int j = random(nosteps-1);
     while (nr[j]) {
-      j = random(19);
+      j = random(nosteps-1);
     }
     nr[j] = true;
     pairs[x] = Pair{i + 1, j + 1};
   }
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < nosteps/2; i++) {
     String sends = "colour " + String(gamecolours[i].red) + "," + String(gamecolours[i].green) + "," + String(gamecolours[i].blue);
     sendMessage(String(pairs[i].one), sends);
     sendMessage(String(pairs[i].two), sends);
@@ -180,7 +181,7 @@ void gameFireflyOn() {
       return;
     }
     if (delta == -1 && i == 75) {
-      sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "firefly");
+      sendMessage(String(neighbours[random(NEIGHBOURSIZE)]), "gamefirefly");
     }
   }
   setGameState(GAMEOFF);
@@ -258,6 +259,7 @@ void gameoff() {
 }
 
 void settingup() { //setup
+  nosteps = getVar("noofgamesteps").value);
   score = 0;
   firstsend = false;
   red = -1;
