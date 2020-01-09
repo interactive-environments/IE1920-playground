@@ -135,13 +135,13 @@ void gameMsg(String msg) {
 
 void makepairs() {
   int pairsSize = 0;
-  int leftoverSize = 20;
-  int* leftovers = new int[20];
+  int leftoverSize = nosteps;
+  int* leftovers = new int[nosteps];
   for (int i = 0; i < leftoverSize; i++) {
     leftovers[i] = i;
   }
 
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < nosteps/2; i++) {
     int indexA = random(leftoverSize - 1);
     int a = leftovers[indexA];
     leftovers = pop(leftovers, leftoverSize, indexA);
@@ -154,6 +154,12 @@ void makepairs() {
 
     pairs[pairsSize] = {a+1, b+1};
     pairsSize++;
+  }
+  for (int i = 0; i < nosteps/2; i++) {
+    String sends = "colour " + String(gamecolours[i].red) + "," + String(gamecolours[i].green) + "," + String(gamecolours[i].blue);
+    if(pairs[i].one == 1 || pairs[i].two == 1){ red = gamecolours[i].red; green = gamecolours[i].green; blue = gamecolours[i].blue;}
+    sendMessage(String(pairs[i].one), sends);
+    sendMessage(String(pairs[i].two), sends);
   }
 }
 
