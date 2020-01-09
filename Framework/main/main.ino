@@ -41,7 +41,8 @@ Var vars[] = {
   {"poletime", 300},
   {"setting", 1},
   {"goalscore", 10},
-  {"remembertime", 3*1000}
+  {"remembertime", 3*1000},
+  {"noofgamesteps", 20}
 };
 
 int id = 15;                         //change per step
