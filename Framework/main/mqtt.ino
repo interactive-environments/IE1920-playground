@@ -5,6 +5,7 @@ const char ssid[] = "iot-net";
 const char pass[] = "interactive";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
+const char marijns_ipaddress[] = "192.168.1.42";
 String lastmessage = "0";
 WiFiClient net;
 MQTTClient client;
@@ -74,7 +75,6 @@ void messageReceived(String &topic, String &payload) {
     }
     if (msg.startsWith("on")) {
       lastOn = getId();
-      //touched = millis();
     }
     if (msg == "failsafe") {
       failsafe = millis();
@@ -106,7 +106,7 @@ void sendMessage(String target, String msg) {
 void initMqtt() {
   Serial.println("WiFi.begin");
   WiFi.begin(ssid, pass);
-  client.begin("broker.shiftr.io", net);
+  client.begin(marijns_ipaddress, net);
   client.onMessage(messageReceived);
   connect();
 }

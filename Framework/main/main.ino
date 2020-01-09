@@ -1,5 +1,3 @@
-#define POLENEIGHBOURSIZE 3
-
 struct Var {
   String varName;
   int value;
@@ -7,6 +5,17 @@ struct Var {
 
 struct Edge {
   int a, b;
+};
+
+enum State {
+  FIREFLY,
+  BREATHING,
+  STEPPING,
+  STEPPED,
+  FADING,
+  POLE,
+  NPOLE,
+  OFF
 };
 
 enum GameState {
@@ -32,17 +41,6 @@ Var vars[] = {
   {"poletime", 300},
   {"setting", 1},
   {"goalscore", 10}
-};
-
-enum State {
-  FIREFLY,
-  BREATHING,
-  STEPPING,
-  STEPPED,
-  FADING,
-  POLE,
-  NPOLE,
-  OFF
 };
 
 int id = 15;                         //change per step
@@ -79,8 +77,7 @@ Var getVar(String variableName) {
 bool checkStepping() {
   if (getRunningAvg() > getVar("threshold").value) {
     touched = millis();
-    if(getVar("setting").value == 1){setState(STEPPING);}
-    else if(getVar("setting").value == 2){ setGameState(GAMESTEPPED);}
+    setState(STEPPING);
     return true;
   }
   return false;
@@ -168,7 +165,7 @@ void setState(State newState) {
         }
         randomPole = "pole " + String(randR) + "," + String(randG) + "." + String(randB);
         randomNPole = "npole " + String(randR) + "," + String(randG) + "." + String(randB);
-        for (int i = 0; i < POLENEIGHBOURSIZE; i++) { //stuur naar alles op de pole dat ze aan moeten
+        for (int i = 0; i < 3; i++) { //stuur naar alles op de pole dat ze aan moeten
           neighb = false;
           for (int j = 0; j < NEIGHBOURSIZE; j++) {                 //check if pole neighbour is ook normale neighbour
             if (poleNeighbours[i] == neighbours[j]) {               //als dat zo is
@@ -184,7 +181,7 @@ void setState(State newState) {
         bool inlist = false;
         for (int i = 0; i < NEIGHBOURSIZE; i++) {
           inlist = false;
-          for (int j = 0; j < POLENEIGHBOURSIZE; j++) {
+          for (int j = 0; j < 3; j++) {
             if (neighbours[i] == poleNeighbours[j]) {
               inlist = true; //als een neighbour ook een poleneighbour is
             }
@@ -225,6 +222,7 @@ void setup()
   if (id == 1) {
     setState(FIREFLY);
   }
+  settingup();  
 }
 
 void loop()
@@ -243,5 +241,5 @@ void loop()
       case OFF: off(); break;
     }
   }
-  else if(getVar("setting").value == 2){ settingup(); gamemain(); }
+  else if(getVar("setting").value == 2){gamemain(); }
 }

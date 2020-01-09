@@ -37,6 +37,14 @@ void setGameState(GameState newState) {
   gameState = newState;
 }
 
+bool checkGameStepping() {
+  if (getRunningAvg() > getVar("threshold").value) {
+    setGameState(GAMESTEPPED);
+    return true;
+  }
+  return false;
+}
+
 void colourmessage(String msg) {
   int space = msg.indexOf(" ");
   int first = msg.indexOf(",", space + 1);
@@ -167,7 +175,7 @@ void gameFireflyOn() {
       pixels.setPixelColor(j, pixels.Color(i * col[0], i * col[1], i * col[2]));
     }
     pixels.show();
-    if (stateChangeCheckWithDelay(5)) {
+    if (gameStateChangeCheckWithDelay(5)) {
       return;
     }
     if (delta == -1 && i == 75) {
@@ -179,7 +187,7 @@ void gameFireflyOn() {
 }
 
 void gameinactive() {
-  if (checkStepping()) {
+  if (checkGameStepping()) {
     return;
   }
   gameFireflyOn();
@@ -192,9 +200,7 @@ void gamestepped() {
     sendMessage("all", endstring);
   }
   float pressureValue = getRunningAvg();
-  if (pressureValue > getVar("threshold").value) {
-    touched = millis();
-  }
+
   for (int j = 0; j < NUMPIXELS; j++) {
     pixels.setPixelColor(j, pixels.Color(red, green, blue));
   }
@@ -242,7 +248,7 @@ void gameoff() {
     gameStateChangeCheckWithDelay(1000);
     clearPixels();
   }
-  if (checkStepping()) {
+  if (checkGameStepping()) {
     return;
   }
   if ((millis() - failsafe) > 15000 && id == 1) {
@@ -253,6 +259,7 @@ void gameoff() {
 void settingup() { //setup
   score = 0;
   firstsend = false;
+  red = -1;
   if (id == 1) {
     makepairs();
   }
