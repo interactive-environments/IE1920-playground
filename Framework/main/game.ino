@@ -71,6 +71,7 @@ bool checkifright() {
   }
   return false;
 }
+
 void sendifright() {
   if (checkifright()) {
     sendMessage(String(savestart), "correct");
@@ -220,7 +221,7 @@ void party() {
       pixels.setPixelColor(j, pixels.Color(gamecolours[random(9)].red, gamecolours[random(9)].green, gamecolours[random(9)].blue));
     }
     pixels.show();
-    gameStateChangeCheckWithDelay(200);
+    if(gameStateChangeCheckWithDelay(200)){return;}
   }
   if (id == 1) {
     setGameState(GAMEFIREFLY);
@@ -245,7 +246,7 @@ void gamecorrect() {
 }
 void gameoff() {
   if (gameState != GAMECORRECT) {
-    gameStateChangeCheckWithDelay(1000);
+    if(gameStateChangeCheckWithDelay(1000)){return;}
     clearPixels();
   }
   if (checkGameStepping()) {
@@ -264,13 +265,13 @@ void settingup() { //setup
     makepairs();
   }
   while (red == -1) {
-    gameStateChangeCheckWithDelay(1);
+    if(gameStateChangeCheckWithDelay(1)){return;}
   }
   for (int j = 0; j < NUMPIXELS; j++) {
     pixels.setPixelColor(j, pixels.Color(red, green, blue));
   }
   pixels.show();
-  gameStateChangeCheckWithDelay(getVar("remembertime").value);
+  if(gameStateChangeCheckWithDelay(getVar("remembertime").value)){return;}
   if (id == 1) {
     setGameState(GAMEFIREFLY);
   }
