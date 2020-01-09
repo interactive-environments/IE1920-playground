@@ -224,6 +224,7 @@ void setup()
   if (id == 1) {
     setState(FIREFLY);
   }
+  if(getVar("setting").value == 2){ settingup();}
 }
 
 void loop()
