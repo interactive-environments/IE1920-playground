@@ -30,11 +30,11 @@ void setGameState(GameState newState) {
     case GAMEFIREFLY: break;
     case GAMESTEPPED: {
         if (!firstsend) {
-    sendMessage("all", startstring);
-  }
-  else {
-    sendMessage("all", endstring);
-  }
+          sendMessage("all", startstring);
+        }
+        else {
+          sendMessage("all", endstring);
+        }
         sendMessage("all", onstring);
         break;
       }
@@ -62,7 +62,7 @@ void colourmessage(String msg) {
 }
 
 bool checkifright() {
-  for (int i = 0; i < nosteps/2; i++) {
+  for (int i = 0; i < nosteps / 2; i++) {
     if (pairs[i].one == savestart) {
       if (pairs[i].two == saveend) {
         return true;
@@ -134,28 +134,38 @@ void gameMsg(String msg) {
 }
 
 void makepairs() {
-  bool nr[nosteps];
-  for (int i = 0; i < nosteps; i++) {
-    nr[i] = false;
+  int pairsSize = 0;
+  int leftoverSize = 20;
+  int* leftovers = new int[20];
+  for (int i = 0; i < leftoverSize; i++) {
+    leftovers[i] = i;
   }
-  for (int x = 0; x < nosteps/2; x++) {
-    int i = random(nosteps-1);
-    while (nr[i]) {
-      i = random(nosteps-1);
+
+  for (int i = 0; i < 10; i++) {
+    int indexA = random(leftoverSize - 1);
+    int a = leftovers[indexA];
+    leftovers = pop(leftovers, leftoverSize, indexA);
+    leftoverSize--;
+
+    int indexB = random(leftoverSize - 1);
+    int b = leftovers[indexB];
+    leftovers = pop(leftovers, leftoverSize, indexB);
+    leftoverSize--;
+
+    pairs[pairsSize] = {a+1, b+1};
+    pairsSize++;
+  }
+}
+
+int* pop(int* arr, int arrSize, int index) {
+  int currIndex = 0;
+  for (int i = 0; i < arrSize; i++) {
+    if (i != index) {
+      arr[currIndex] = arr[i];
+      currIndex++;
     }
-    nr[i] = true;
-    int j = random(nosteps-1);
-    while (nr[j]) {
-      j = random(nosteps-1);
-    }
-    nr[j] = true;
-    pairs[x] = Pair{i + 1, j + 1};
   }
-  for (int i = 0; i < nosteps/2; i++) {
-    String sends = "colour " + String(gamecolours[i].red) + "," + String(gamecolours[i].green) + "," + String(gamecolours[i].blue);
-    sendMessage(String(pairs[i].one), sends);
-    sendMessage(String(pairs[i].two), sends);
-  }
+  return arr;
 }
 
 bool gameStateChangeCheckWithDelay(int wait_in_millis) {
@@ -222,7 +232,9 @@ void party() {
       pixels.setPixelColor(j, pixels.Color(gamecolours[random(9)].red, gamecolours[random(9)].green, gamecolours[random(9)].blue));
     }
     pixels.show();
-    if(gameStateChangeCheckWithDelay(200)){return;}
+    if (gameStateChangeCheckWithDelay(200)) {
+      return;
+    }
   }
   if (id == 1) {
     setGameState(GAMEFIREFLY);
@@ -247,7 +259,9 @@ void gamecorrect() {
 }
 void gameoff() {
   if (gameState != GAMECORRECT) {
-    if(gameStateChangeCheckWithDelay(1000)){return;}
+    if (gameStateChangeCheckWithDelay(1000)) {
+      return;
+    }
     clearPixels();
   }
   if (checkGameStepping()) {
@@ -267,13 +281,17 @@ void settingup() { //setup
     makepairs();
   }
   while (red == -1) {
-    if(gameStateChangeCheckWithDelay(1)){return;}
+    if (gameStateChangeCheckWithDelay(1)) {
+      return;
+    }
   }
   for (int j = 0; j < NUMPIXELS; j++) {
     pixels.setPixelColor(j, pixels.Color(red, green, blue));
   }
   pixels.show();
-  if(gameStateChangeCheckWithDelay(getVar("remembertime").value)){return;}
+  if (gameStateChangeCheckWithDelay(getVar("remembertime").value)) {
+    return;
+  }
   if (id == 1) {
     setGameState(GAMEFIREFLY);
   }
@@ -283,11 +301,11 @@ void settingup() { //setup
 
 }
 
-void gamemain() { 
-    switch (gameState) {
-      case GAMEFIREFLY: gameinactive(); break;
-      case GAMESTEPPED: gamestepped(); break;
-      case GAMECORRECT: gamecorrect(); break;
-      case GAMEOFF: gameoff(); break;
-    }
+void gamemain() {
+  switch (gameState) {
+    case GAMEFIREFLY: gameinactive(); break;
+    case GAMESTEPPED: gamestepped(); break;
+    case GAMECORRECT: gamecorrect(); break;
+    case GAMEOFF: gameoff(); break;
+  }
 }
