@@ -55,6 +55,9 @@ void changemessage(String msg) {
   String varname = msg.substring(first + 1, second);
   int value = msg.substring(second + 1, msg.length()).toInt();
   changeVar(varname, value);
+  if(varname == "setting" && value == 2){
+      settingup();  
+  }
 }
 
 void messageReceived(String &topic, String &payload) {

@@ -40,7 +40,8 @@ Var vars[] = {
   {"waittime", 30 * 1000},
   {"poletime", 300},
   {"setting", 1},
-  {"goalscore", 10}
+  {"goalscore", 10},
+  {"remembertime", 3*1000}
 };
 
 int id = 15;                         //change per step
@@ -222,7 +223,6 @@ void setup()
   if (id == 1) {
     setState(FIREFLY);
   }
-  settingup();  
 }
 
 void loop()

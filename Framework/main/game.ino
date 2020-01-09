@@ -270,7 +270,7 @@ void settingup() { //setup
     pixels.setPixelColor(j, pixels.Color(red, green, blue));
   }
   pixels.show();
-  gameStateChangeCheckWithDelay(3000);
+  gameStateChangeCheckWithDelay(getVar("remembertime").value);
   if (id == 1) {
     setGameState(GAMEFIREFLY);
   }
@@ -280,15 +280,11 @@ void settingup() { //setup
 
 }
 
-void gamemain() { //loop
-  while (getVar("setting").value == 2) {
-    loopPressureSensor();
-    loopMqtt();
+void gamemain() { 
     switch (gameState) {
       case GAMEFIREFLY: gameinactive(); break;
       case GAMESTEPPED: gamestepped(); break;
       case GAMECORRECT: gamecorrect(); break;
       case GAMEOFF: gameoff(); break;
     }
-  }
 }
