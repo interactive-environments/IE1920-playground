@@ -238,7 +238,8 @@ void setup()
   if (id == 1) {
     setState(FIREFLY);
   }
-  settingup();
+  if(getVar("setting").value == 2){ settingup();}
+  if(getVar("setting").value == 3){ marijnSetup();}
 }
 
 void loop()

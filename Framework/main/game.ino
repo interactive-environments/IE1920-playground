@@ -1,7 +1,7 @@
 Pair pairs[10];
 GameState gameState = GAMEOFF;
-String startstring = "start " + id;
-String endstring = "end " + id;
+String startstring = "start " + String(id);
+String endstring = "end " + String(id);
 int score;
 int red = -1;
 int green = -1;
@@ -29,6 +29,12 @@ void setGameState(GameState newState) {
   switch (newState) {
     case GAMEFIREFLY: break;
     case GAMESTEPPED: {
+        if (!firstsend) {
+    sendMessage("all", startstring);
+  }
+  else {
+    sendMessage("all", endstring);
+  }
         sendMessage("all", onstring);
         break;
       }
@@ -195,12 +201,6 @@ void gameinactive() {
   gameFireflyOn();
 }
 void gamestepped() {
-  if (!firstsend) {
-    sendMessage("all", startstring);
-  }
-  else {
-    sendMessage("all", endstring);
-  }
   float pressureValue = getRunningAvg();
 
   for (int j = 0; j < NUMPIXELS; j++) {
@@ -259,7 +259,7 @@ void gameoff() {
 }
 
 void settingup() { //setup
-  nosteps = getVar("noofgamesteps").value);
+  nosteps = getVar("noofgamesteps").value;
   score = 0;
   firstsend = false;
   red = -1;
