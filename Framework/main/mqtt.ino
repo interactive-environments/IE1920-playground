@@ -55,14 +55,27 @@ void changemessage(String msg) {
   String varname = msg.substring(first + 1, second);
   int value = msg.substring(second + 1, msg.length()).toInt();
   changeVar(varname, value);
-  if(varname == "setting" && value == 2){
-      settingup();  
-  }
 }
 
 void messageReceived(String &topic, String &payload) {
   lastmessage = payload; //parser, if in deze state, maak state breathing.
   String msg = payload;
+  if (msg.startsWith("change setting")) {
+    int settingIndex = msg.indexOf(" ", msg.indexOf(" ") + 1);
+    if (settingIndex != -1) {
+      int setting = msg.substring(settingIndex, msg.length()).toInt();
+      changeVar("setting", setting);
+      switch (setting) {
+        case 1: ; break;
+        case 2: settingup(); break;
+        case 3: marijnSetup(); break;
+      }
+      return;
+    }
+  }
+  if (msg.startsWith("change")) {
+    changemessage(msg);
+  }
   if (getVar("setting").value == 1) {
     if (msg == "breathing" && (state == OFF || state == FIREFLY)) {
       setState(BREATHING);
@@ -93,12 +106,11 @@ void messageReceived(String &topic, String &payload) {
       polemsg();
       setState(NPOLE);
     }
-    if (msg.startsWith("change")) {
-      changemessage(msg);
-    }
   }
-  else if(getVar("setting").value == 2){
+  else if (getVar("setting").value == 2) {
     gameMsg(msg);
+  } else if (getVar("setting").value == 3) {
+    getMarMessage(topic, payload);
   }
 }
 

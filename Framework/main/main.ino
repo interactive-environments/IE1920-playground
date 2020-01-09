@@ -25,11 +25,19 @@ enum GameState {
   GAMEOFF
 };
 
-struct Pair{
+enum MarijnState {
+  M_FIREFLY,
+  M_STEPPED,
+  M_STEPPING,
+  M_POLELIGHT,
+  M_OFF
+};
+
+struct Pair {
   int one, two;
 };
 
-struct Colour{
+struct Colour {
   int red, green, blue;
 };
 
@@ -41,7 +49,10 @@ Var vars[] = {
   {"poletime", 300},
   {"setting", 1},
   {"goalscore", 10},
-  {"remembertime", 3*1000}
+  {"remembertime", 3 * 1000},
+  {"m_release", 3000},
+  {"m_firefly_period", 1000},
+  {"m_timeout_period", 10000}
 };
 
 int id = 15;                         //change per step
@@ -72,6 +83,9 @@ Var getVar(String variableName) {
       return vars[i];
     }
   }
+  sendMessage("all", "Invalide varname accessed");
+  return {"", 0};
+
 }
 
 
@@ -223,23 +237,27 @@ void setup()
   if (id == 1) {
     setState(FIREFLY);
   }
+  settingup();
 }
 
 void loop()
 {
   loopPressureSensor();
   loopMqtt();
-  if (getVar("setting").value == 1) {
-    switch (state) {
-      case FIREFLY: inactive(); break;
-      case BREATHING: breathing(); break;
-      case STEPPING: stepping(); break;
-      case STEPPED: stepped(); break;
-      case FADING: fading(); break;
-      case POLE: pole(); break;
-      case NPOLE: npole(); break;
-      case OFF: off(); break;
-    }
+  switch (getVar("setting").value) {
+    case 1: {
+        switch (state) {
+          case FIREFLY: inactive(); break;
+          case BREATHING: breathing(); break;
+          case STEPPING: stepping(); break;
+          case STEPPED: stepped(); break;
+          case FADING: fading(); break;
+          case POLE: pole(); break;
+          case NPOLE: npole(); break;
+          case OFF: off(); break;
+        }
+      } break;
+    case 2: gamemain(); break;
+    case 3: marijnMain(); break;
   }
-  else if(getVar("setting").value == 2){gamemain(); }
 }
