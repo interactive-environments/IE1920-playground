@@ -185,6 +185,7 @@ bool gameStateChangeCheckWithDelay(int wait_in_millis) {
   while (millis() < starttime + wait_in_millis) {
     loopPressureSensor();
     loopMqtt();
+    checkGameStepping();
     if (gameState != startstate) {
       return true;
     }

@@ -5,7 +5,7 @@ const char ssid[] = "iot-net";
 const char pass[] = "interactive";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
-char network_address[] = "192.168.1.42";
+char network_address[] = "broker.shiftr.io";
 String lastmessage = "0";
 WiFiClient net;
 MQTTClient client;

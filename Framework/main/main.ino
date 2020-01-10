@@ -56,7 +56,7 @@ Var vars[] = {
   {"noofgamesteps", 20}
 };
 
-int id = 15;                         //change per step
+int id = 1;                         //change per step
 int lastOn = 0;
 const int NEIGHBOURSIZE = getNeighboursSize(id);
 int* neighbours = new int[8];
@@ -69,6 +69,7 @@ State state = OFF;
 int curR, curG, curB;
 int poleR, poleG, poleB;
 String stepstring = "step " + String(id);
+  String onstring = "on " + String(id);
 
 void changeVar(String variableName, int value) {
   for (int i = 0; i < (sizeof(vars) / sizeof(vars[0])); i++) {
@@ -160,12 +161,13 @@ void off() {
 }
 
 void setState(State newState) {
-  String onstring = "on " + String(id);
   int randR, randG, randB;
   String randomPole;
   String randomNPole;
   switch (newState) {
-    case FIREFLY: break;
+    case FIREFLY: 
+    sendMessage("all", "idle-mode");
+    break;
     case BREATHING: break;
     case STEPPING:
       {
@@ -210,6 +212,7 @@ void setState(State newState) {
       }
     case STEPPED:
       {
+        sendMessage("all", "up " + String(id));
         for (int i = 0; i < NEIGHBOURSIZE; i++) {
           sendMessage(String(neighbours[i]), "off");
         }

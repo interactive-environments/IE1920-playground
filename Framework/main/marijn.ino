@@ -20,10 +20,10 @@ int lastActivity = 0;
 bool on = false;
 
 void getMarMessage(String & topic, String & payload) {
-  if (payload.startsWith("color-index") && mState != M_STEPPING && mState != M_STEPPED) {
+  if (payload.startsWith("color-index") && mState != M_STEPPING) {
     int index = payload.indexOf(" ");
     if (index != -1) {
-      int currColorIndex = payload.substring(index, payload.length()).toInt();
+      currColorIndex = payload.substring(index, payload.length()).toInt();
     }
     mSetState(M_POLELIGHT);
   }
@@ -81,7 +81,7 @@ void mStepped() {
 }
 
 void mPoleLight() {
-  showColor(mColors[currColorIndex][0], mColors[currColorIndex][1], mColors[currColorIndex][2]);
+    showColor(mColors[currColorIndex][0], mColors[currColorIndex][1], mColors[currColorIndex][2]);
 }
 
 void mSetState(MarijnState s) {
@@ -99,6 +99,8 @@ void mSetState(MarijnState s) {
       } break;
     case M_STEPPED: {
         sendMessage("all", "off " + String(id));
+        sendMessage("all", "up " + String(id));
+
         mLastStepped = millis();
         for (int i = 0; i < 3; i++) {
           sendMessage(String(poleNeighbours[i]), "color-off");
@@ -108,6 +110,7 @@ void mSetState(MarijnState s) {
         on = false;
         mWaitingTime = random(getVar("m_timeout_period").value / 2, getVar("m_timeout_period").value);
         mLastSwitch = millis();
+        sendMessage("all", "idle-mode");
       } break;
 
   }
@@ -119,10 +122,10 @@ void marijnSetup() {
 }
 
 void marijnMain() {
-  pixels.clear();
+  clearPixels();
   if (getRunningAvg() > getVar("threshold").value && mState != M_STEPPING) {
     mSetState(M_STEPPING);
-  }  
+  }
   switch (mState) {
     case M_FIREFLY: mFirefly(); break;
     case M_STEPPING: mStepping(); break;
