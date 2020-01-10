@@ -5,7 +5,7 @@ const char ssid[] = "iot-net";
 const char pass[] = "interactive";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
-const char marijns_ipaddress[] = "192.168.1.42";
+char network_address[] = "192.168.1.42";
 String lastmessage = "0";
 WiFiClient net;
 MQTTClient client;
@@ -27,9 +27,17 @@ void connect() {
 
   Serial.println("\nconnected!");
 
-  client.subscribe("/check");
   client.subscribe("/all");
   client.subscribe("/" + String(id));
+}
+
+
+void resetMqtt() {
+  Serial.println("Disconnecting!");
+  client.disconnect();
+  client.begin(network_address, net);
+  client.onMessage(messageReceived);
+  connect();
 }
 
 int getId() {
@@ -72,6 +80,14 @@ void messageReceived(String &topic, String &payload) {
         case 3: marijnSetup(); break;
       }
       return;
+    }
+  }
+  if (msg.startsWith("change network")) {
+    int settingIndex = msg.indexOf(" ", msg.indexOf(" ") + 1);
+    if (settingIndex != -1) {
+      String newNet = msg.substring(settingIndex, msg.length());
+      newNet.toCharArray(network_address, newNet.length());
+      resetMqtt();
     }
   }
   if (msg.startsWith("change")) {
@@ -122,8 +138,7 @@ void sendMessage(String target, String msg) {
 void initMqtt() {
   Serial.println("WiFi.begin");
   WiFi.begin(ssid, pass);
-  //client.begin(marijns_ipaddress, net);
-  client.begin("broker.shiftr.io", net);
+  client.begin(network_address, net);
   client.onMessage(messageReceived);
   connect();
 }
