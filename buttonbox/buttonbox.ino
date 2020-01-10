@@ -12,6 +12,8 @@ const char marijns_ipaddress[] = "192.168.1.42";
 WiFiClient net;
 MQTTClient client;
 
+int setting;
+
 //input pins
   const int forestbutton = A0;
   const int melodicbutton = A1;
@@ -56,8 +58,16 @@ void connect() {
 }
  
 void messageReceived(String &topic, String &payload) {
-  Serial.println("incoming: " + topic + " - " + payload);
+  String msg = payload;
+  int first = msg.indexOf(" ");
+  int second = msg.indexOf(" ", first + 1);
+  String varname = msg.substring(first + 1, second);
+  int value = msg.substring(second + 1, msg.length()).toInt();
+  if (msg.startsWith("change") && varname == "setting") {
+      setting = value;
+  }
 }
+
 void sendMessage(String target, String msg) {
   client.publish("/" + target, msg);
 }
@@ -83,11 +93,32 @@ void setup() {
   Keyboard.begin();
 }
 
+void settinglight(int i){
+  if(i == 1 || i == 4){
+    //light i = on
+    //light i+1 = off
+    //light i+2 = off
+  }
+   if(i == 2 || i == 5){
+    //light i-1 = off
+    //light i = on
+    //light i+1 = off
+  }
+   if(i == 3 || i == 6){
+    //light i-2 = off
+    //light i-1 = off
+    //light i = on
+  }
+  
+}
+
+
 void buttonpressed(){
   for(int i = 0; i<6; i++){
   int buttonState = digitalRead(buttoninput[i]);
   if ((buttonState != prevbuttonstate[i]) && (buttonState == HIGH)) {
     sendMessage("all", message[i]);
+    settinglight(i);
   }
   // save the current button state for comparison next time:
   prevbuttonstate[i] = buttonState;
@@ -101,4 +132,5 @@ void loop() {
     connect();
   }
   buttonpressed();
+  //settinglight();
 }
