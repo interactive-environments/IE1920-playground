@@ -53,5 +53,5 @@ void bang(){
   }
   pixels.show();
   delay(300);
-  pixels.clear();
+  clearPixels();
 }

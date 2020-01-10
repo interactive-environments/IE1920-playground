@@ -30,10 +30,10 @@ void setGameState(GameState newState) {
     case GAMEFIREFLY: break;
     case GAMESTEPPED: {
         if (!firstsend) {
-          sendMessage("all", startstring);
+          sendMessage("check", startstring);
         }
         else {
-          sendMessage("all", endstring);
+          sendMessage("check", endstring);
         }
         sendMessage("all", onstring);
         break;
@@ -128,7 +128,7 @@ void gameMsg(String msg) {
     if (id == 1) {
       int space = msg.indexOf(" ");
       saveend = (msg.substring(space + 1, msg.length())).toInt();
-      checkifright();
+      sendifright();
     }
   }
 }
@@ -141,7 +141,7 @@ void makepairs() {
     leftovers[i] = i;
   }
 
-  for (int i = 0; i < nosteps/2; i++) {
+  for (int i = 0; i < nosteps / 2; i++) {
     int indexA = random(leftoverSize - 1);
     int a = leftovers[indexA];
     leftovers = pop(leftovers, leftoverSize, indexA);
@@ -152,12 +152,16 @@ void makepairs() {
     leftovers = pop(leftovers, leftoverSize, indexB);
     leftoverSize--;
 
-    pairs[pairsSize] = {a+1, b+1};
+    pairs[pairsSize] = {a + 1, b + 1};
     pairsSize++;
   }
-  for (int i = 0; i < nosteps/2; i++) {
+  for (int i = 0; i < nosteps / 2; i++) {
     String sends = "colour " + String(gamecolours[i].red) + "," + String(gamecolours[i].green) + "," + String(gamecolours[i].blue);
-    if(pairs[i].one == 1 || pairs[i].two == 1){ red = gamecolours[i].red; green = gamecolours[i].green; blue = gamecolours[i].blue;}
+    if (pairs[i].one == 1 || pairs[i].two == 1) {
+      red = gamecolours[i].red;
+      green = gamecolours[i].green;
+      blue = gamecolours[i].blue;
+    }
     sendMessage(String(pairs[i].one), sends);
     sendMessage(String(pairs[i].two), sends);
   }
@@ -235,19 +239,15 @@ void party() {
       return;
     }
     for (int j = 0; j < NUMPIXELS; j++) {
-      pixels.setPixelColor(j, pixels.Color(gamecolours[random(9)].red, gamecolours[random(9)].green, gamecolours[random(9)].blue));
+      int colourset = random(9);
+      pixels.setPixelColor(j, pixels.Color(gamecolours[colourset].red, gamecolours[colourset].green, gamecolours[colourset].blue));
     }
     pixels.show();
     if (gameStateChangeCheckWithDelay(200)) {
       return;
     }
   }
-  if (id == 1) {
-    setGameState(GAMEFIREFLY);
-  }
-  else {
-    setGameState(GAMEOFF);
-  }
+  settingup();
 }
 
 

@@ -27,6 +27,7 @@ void connect() {
 
   Serial.println("\nconnected!");
 
+  client.subscribe("/check");
   client.subscribe("/all");
   client.subscribe("/" + String(id));
 }
@@ -121,7 +122,8 @@ void sendMessage(String target, String msg) {
 void initMqtt() {
   Serial.println("WiFi.begin");
   WiFi.begin(ssid, pass);
-  client.begin(marijns_ipaddress, net);
+  //client.begin(marijns_ipaddress, net);
+  client.begin("broker.shiftr.io", net);
   client.onMessage(messageReceived);
   connect();
 }
