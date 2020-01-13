@@ -47,7 +47,7 @@ Var vars[] = {
   {"threshold", 4},
   {"waittime", 30 * 1000},
   {"poletime", 300},
-  {"setting", 1},
+  {"setting", 3},
   {"goalscore", 10},
   {"remembertime", 3 * 1000},
   {"m_release", 3000},
@@ -56,7 +56,7 @@ Var vars[] = {
   {"noofgamesteps", 20}
 };
 
-int id = 1;                         //change per step
+int id = 4;                         //change per step
 int lastOn = 0;
 const int NEIGHBOURSIZE = getNeighboursSize(id);
 int* neighbours = new int[8];

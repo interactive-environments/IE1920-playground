@@ -18,17 +18,26 @@ int mLastSwitch = 0;
 int mWaitingTime = 0;
 int lastActivity = 0;
 bool on = false;
+int lastNeighbour;
 
 void getMarMessage(String & topic, String & payload) {
   if (payload.startsWith("color-index") && mState != M_STEPPING) {
     int index = payload.indexOf(" ");
     if (index != -1) {
-      currColorIndex = payload.substring(index, payload.length()).toInt();
+      currColorIndex = payload.substring(index, payload.indexOf("from") - 1).toInt();
     }
+    index = payload.indexOf("from") + 5;
+    lastNeighbour = payload.substring(index, payload.length()).toInt();
     mSetState(M_POLELIGHT);
   }
   if (payload.startsWith("color-off") && mState == M_POLELIGHT) {
-    mSetState(M_OFF);
+    int index = payload.indexOf(" ");
+    if (index != -1) {
+      int sender = payload.substring(index, payload.length()).toInt();
+      if (sender == lastNeighbour) {
+        mSetState(M_OFF);
+      }
+    }
   }
   if (payload.startsWith("on") || payload.startsWith("off")) {
     lastActivity = millis();
@@ -81,7 +90,7 @@ void mStepped() {
 }
 
 void mPoleLight() {
-    showColor(mColors[currColorIndex][0], mColors[currColorIndex][1], mColors[currColorIndex][2]);
+  showColor(mColors[currColorIndex][0], mColors[currColorIndex][1], mColors[currColorIndex][2]);
 }
 
 void mSetState(MarijnState s) {
@@ -94,7 +103,7 @@ void mSetState(MarijnState s) {
           poleColorIndex = random(mNumColors - 1);
         }
         for (int i = 0; i < 3; i++) {
-          sendMessage(String(poleNeighbours[i]), "color-index " + String(poleColorIndex));
+          sendMessage(String(poleNeighbours[i]), "color-index " + String(poleColorIndex) + " from " + String(id));
         }
       } break;
     case M_STEPPED: {
@@ -103,7 +112,7 @@ void mSetState(MarijnState s) {
 
         mLastStepped = millis();
         for (int i = 0; i < 3; i++) {
-          sendMessage(String(poleNeighbours[i]), "color-off");
+          sendMessage(String(poleNeighbours[i]), "color-off " + String(id));
         }
       } break;
     case M_FIREFLY: {
