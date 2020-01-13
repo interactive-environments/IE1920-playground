@@ -8,11 +8,12 @@ const char pass[] = "interactive";
 const char mqtt_clientID[] = "buttonbox";
 const char mqtt_username[] = "35e5494d";
 const char mqtt_password[] = "52d131e1f30b531c";
-const char marijns_ipaddress[] = "192.168.1.42";
+//const char marijns_ipaddress[] = "192.168.1.42";
+const char marijns_ipaddress[] = "broker.shiftr.io";
 WiFiClient net;
 MQTTClient client;
 
-int setting;
+int lightsetting;
 
 //input pins
   const int forestbutton = A0;
@@ -64,7 +65,7 @@ void messageReceived(String &topic, String &payload) {
   String varname = msg.substring(first + 1, second);
   int value = msg.substring(second + 1, msg.length()).toInt();
   if (msg.startsWith("change") && varname == "setting") {
-      setting = value;
+      lightsetting = value;
   }
 }
 
@@ -118,6 +119,7 @@ void buttonpressed(){
   int buttonState = digitalRead(buttoninput[i]);
   if ((buttonState != prevbuttonstate[i]) && (buttonState == HIGH)) {
     sendMessage("all", message[i]);
+    lightsetting = i;
     settinglight(i);
   }
   // save the current button state for comparison next time:
@@ -131,6 +133,7 @@ void loop() {
   if (!client.connected()) {
     connect();
   }
+  sendMessage("all", message[1]);
   buttonpressed();
   //settinglight();
 }
