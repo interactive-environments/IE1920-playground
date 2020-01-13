@@ -85,8 +85,9 @@ void messageReceived(String &topic, String &payload) {
   if (msg.startsWith("change network")) {
     int settingIndex = msg.indexOf(" ", msg.indexOf(" ") + 1);
     if (settingIndex != -1) {
-      String newNet = msg.substring(settingIndex, msg.length());
-      newNet.toCharArray(network_address, newNet.length());
+      String newNet = msg.substring(settingIndex+1, msg.length());
+      newNet.toCharArray(network_address, newNet.length()+1);
+      Serial.println(network_address);
       resetMqtt();
     }
   }
