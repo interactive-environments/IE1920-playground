@@ -25,7 +25,8 @@ If the normal behaviour gets called: (tab main)
     The function that corresponds with the current State gets called.  
     If there is no activity while on the normal mode, the state will go to INACTIVE:
         The idle mode corresponding with the idle_setting gets activated. This is either marijnIdle of lauraIdle.
-           marijnIdle: (tab marijn) 
+           marijnIdle: (tab marijn)
+              Every step fades in and fades out. The time it waits until it starts fading in is random and is always inbetween a                       predefined range. The time it waits until fading out is also random and also inbetween a predefined range.
            lauraIdle: (tab laura)
               The idle mode will start on the last step that was pressed (or the Arduino with ID 1 if there is none). That step will be               in the LauraState L_FIREFLY. It will fade in and while fading out, it sends the message to go into state L_FIREFLY to a                 random neighbour (that is defined in the tab graph) of the step. Then the current step will be off and will be in                       LauraState L_OFF until it gets another message from a neighbour or until someone steps on the step.
     If someone steps on a step, the State will be STEPPING: 
