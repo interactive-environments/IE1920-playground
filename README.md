@@ -2,7 +2,7 @@
 
 Original github: https://github.com/MarijnRoelvink/bungle-jungle
 
-MaxPatch is also added in this github.
+MaxPatch is not added in the github due to size limitations but added with the digital deliveries.
 
 The code is the same for every Arduino in STRIDE except for the ID. That needs to be changed per Arduino.
 
