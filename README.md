@@ -2,9 +2,11 @@
 
 Original github: https://github.com/MarijnRoelvink/bungle-jungle
 
+MaxPatch is also added in this github.
+
 The code is the same for every Arduino in STRIDE except for the ID. That needs to be changed per Arduino.
 
-How does the code work:
+# How does the code work:
 
 In the main loop, either the game gets called or the normal behaviour get called.
 
